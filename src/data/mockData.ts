@@ -39,6 +39,15 @@ export interface Bill {
   status: "Paid" | "Pending";
 }
 
+export type RoomType = "General Ward" | "Semi-Private Room" | "Private Room" | "ICU";
+
+export interface RoomServiceRate {
+  roomType: RoomType;
+  pricePerDay: number;
+  availability: "Available" | "Limited" | "Full";
+  defaultExtraCareCharge?: number;
+}
+
 export const patients: Patient[] = [
   { id: "P-1001", name: "Rahul Sharma", phone: "9876543210", age: 34, gender: "Male", symptoms: "Fever, Headache", registeredAt: "2026-03-25" },
   { id: "P-1002", name: "Priya Patel", phone: "9876543211", age: 28, gender: "Female", symptoms: "Cough, Cold", registeredAt: "2026-03-26" },
@@ -83,6 +92,13 @@ export const bills: Bill[] = [
     ],
     total: 1100, date: "2026-03-28", status: "Pending",
   },
+];
+
+export const roomServiceRates: RoomServiceRate[] = [
+  { roomType: "General Ward", pricePerDay: 1200, availability: "Available" },
+  { roomType: "Semi-Private Room", pricePerDay: 2500, availability: "Limited" },
+  { roomType: "Private Room", pricePerDay: 4200, availability: "Available" },
+  { roomType: "ICU", pricePerDay: 8500, availability: "Limited", defaultExtraCareCharge: 2000 },
 ];
 
 export const doctors = [

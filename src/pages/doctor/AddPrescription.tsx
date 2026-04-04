@@ -4,15 +4,48 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { patients } from "@/data/mockData";
+import { doctors, patients } from "@/data/mockData";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { PlusCircle, Trash2 } from "lucide-react";
 
 interface MedicineRow { name: string; dosage: string; timing: string; duration: string }
 
+interface StoredPrescription {
+  id: string;
+  patientId: string;
+  patientName: string;
+  doctor: string;
+  medicines: MedicineRow[];
+  notes: string;
+  date: string;
+}
+
+interface PharmacyDispatch {
+  sent: boolean;
+  sentAt?: string;
+}
+
+const PRESCRIPTIONS_STORAGE_KEY = "medcore-doctor-prescriptions";
+const PHARMACY_DISPATCH_STORAGE_KEY = "medcore-pharmacy-dispatch";
+
+const resolveDoctorFromEmail = (email: string | null) => {
+  if (!email) return doctors[0];
+  const localPart = email.split("@")[0].toLowerCase();
+
+  const matched = doctors.find((doctor) => {
+    const normalized = doctor.replace("Dr. ", "").toLowerCase();
+    return normalized.split(" ").some((token) => localPart.includes(token));
+  });
+
+  return matched ?? doctors[0];
+};
+
 const AddPrescription = () => {
+  const { email } = useAuth();
   const [patientId, setPatientId] = useState("");
   const [notes, setNotes] = useState("");
+  const [sendToPharmacyNow, setSendToPharmacyNow] = useState(true);
   const [medicines, setMedicines] = useState<MedicineRow[]>([
     { name: "", dosage: "", timing: "", duration: "" }
   ]);
@@ -25,9 +58,63 @@ const AddPrescription = () => {
     setMedicines(updated);
   };
 
+  const resetForm = () => {
+    setPatientId("");
+    setNotes("");
+    setMedicines([{ name: "", dosage: "", timing: "", duration: "" }]);
+    setSendToPharmacyNow(true);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Prescription saved successfully!");
+
+    const selectedPatient = patients.find((patient) => patient.id === patientId);
+    if (!selectedPatient) {
+      toast.error("Please select a patient.");
+      return;
+    }
+
+    const cleanedMedicines = medicines.filter(
+      (medicine) => medicine.name.trim() && medicine.dosage.trim() && medicine.timing.trim() && medicine.duration.trim(),
+    );
+
+    if (cleanedMedicines.length === 0) {
+      toast.error("Add at least one complete medicine row.");
+      return;
+    }
+
+    const timestamp = Date.now();
+    const prescriptionId = `RX-${timestamp}`;
+    const currentDoctor = resolveDoctorFromEmail(email);
+
+    const newPrescription: StoredPrescription = {
+      id: prescriptionId,
+      patientId: selectedPatient.id,
+      patientName: selectedPatient.name,
+      doctor: currentDoctor,
+      medicines: cleanedMedicines,
+      notes: notes.trim(),
+      date: new Date().toISOString().split("T")[0],
+    };
+
+    try {
+      const existingRaw = window.localStorage.getItem(PRESCRIPTIONS_STORAGE_KEY);
+      const existing = existingRaw ? (JSON.parse(existingRaw) as StoredPrescription[]) : [];
+      const updated = [newPrescription, ...existing];
+      window.localStorage.setItem(PRESCRIPTIONS_STORAGE_KEY, JSON.stringify(updated));
+
+      if (sendToPharmacyNow) {
+        const dispatchRaw = window.localStorage.getItem(PHARMACY_DISPATCH_STORAGE_KEY);
+        const dispatchMap = dispatchRaw ? (JSON.parse(dispatchRaw) as Record<string, PharmacyDispatch>) : {};
+        dispatchMap[prescriptionId] = { sent: true, sentAt: new Date().toISOString() };
+        window.localStorage.setItem(PHARMACY_DISPATCH_STORAGE_KEY, JSON.stringify(dispatchMap));
+      }
+
+      toast.success(sendToPharmacyNow ? "Prescription saved and sent to pharmacy." : "Prescription saved successfully!");
+      resetForm();
+    } catch {
+      toast.error("Unable to save prescription. Please try again.");
+    }
   };
 
   return (
@@ -87,7 +174,18 @@ const AddPrescription = () => {
               <Input placeholder="Additional notes..." value={notes} onChange={(e) => setNotes(e.target.value)} />
             </div>
 
-            <Button type="submit" className="w-full sm:w-auto px-8">Save Prescription</Button>
+            <label className="flex items-center gap-2 text-sm text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={sendToPharmacyNow}
+                onChange={(e) => setSendToPharmacyNow(e.target.checked)}
+              />
+              Send this prescription to pharmacy immediately
+            </label>
+
+            <Button type="submit" className="w-full sm:w-auto px-8">
+              {sendToPharmacyNow ? "Save & Send to Pharmacy" : "Save Prescription"}
+            </Button>
           </form>
         </div>
       </div>

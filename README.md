@@ -100,8 +100,4 @@ npm run test
 
 ## Current Scope
 
-This repository contains Phase-1 implementation. Production backend APIs, real authentication, and advanced AI workflows are planned for subsequent phases.
-
-## Ownership
-
-Maintained by MedCore HMS engineering team.
+This repository contains Phase-1 implementation. Production backend APIs, real authentication, and advanced AI workflows ntained by MedCore HMS engineering team.

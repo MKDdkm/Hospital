@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Sora:wght@500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
+    --background: 205 43% 95%;
     --foreground: 215 25% 15%;
 
     --card: 0 0% 100%;
@@ -15,7 +15,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 215 25% 15%;
 
-    --primary: 211 84% 45%;
+    --primary: 204 60% 40%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 210 20% 96%;
@@ -32,7 +32,7 @@
 
     --border: 214 20% 90%;
     --input: 214 20% 90%;
-    --ring: 211 84% 45%;
+    --ring: 204 60% 40%;
 
     --radius: 0.5rem;
 
@@ -53,8 +53,8 @@
     --glass-bg: 0 0% 100% / 0.15;
     --glass-border: 0 0% 100% / 0.25;
 
-    --dashboard-bg-start: 216 43% 97%;
-    --dashboard-bg-end: 209 40% 99%;
+    --dashboard-bg-start: 205 43% 85%;
+    --dashboard-bg-end: 204 60% 40%;
   }
 }
 
@@ -62,13 +62,18 @@
   * {
     @apply border-border;
   }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif;
     background-image:
-      radial-gradient(circle at 10% 10%, hsl(211 84% 45% / 0.08), transparent 32%),
-      radial-gradient(circle at 90% 90%, hsl(199 89% 48% / 0.07), transparent 35%),
-      linear-gradient(145deg, hsl(var(--dashboard-bg-start)), hsl(var(--dashboard-bg-end)));
+      radial-gradient(circle at 8% 8%, hsl(205 43% 95% / 0.95), transparent 32%),
+      radial-gradient(circle at 92% 88%, hsl(204 60% 40% / 0.15), transparent 38%),
+      linear-gradient(150deg, hsl(var(--dashboard-bg-start)), hsl(206 40% 94%));
     background-attachment: fixed;
   }
 
@@ -101,34 +106,99 @@
     @apply text-xl sm:text-2xl font-bold tracking-tight;
   }
 
-  .glass-card {
-    @apply backdrop-blur-xl border rounded-2xl;
-    background: linear-gradient(165deg, hsl(0 0% 100% / 0.3), hsl(0 0% 100% / 0.12));
-    border-color: hsl(0 0% 100% / 0.34);
-    box-shadow: 0 16px 38px 0 rgba(16, 36, 64, 0.2);
+  /* Smooth transitions for all interactive elements */
+  button, a, [role="button"] {
+    @apply transition-all duration-300 ease-out;
   }
 
+  /* Enhanced glass card with smooth animations */
+  .glass-card {
+    @apply backdrop-blur-2xl border rounded-[24px] transition-all duration-300 ease-out;
+    background: linear-gradient(165deg, hsl(0 0% 100% / 0.42), hsl(0 0% 100% / 0.18));
+    border-color: hsl(0 0% 100% / 0.50);
+    box-shadow: 0 20px 45px -16px rgba(40, 114, 161, 0.4);
+  }
+
+  .glass-card:hover {
+    box-shadow: 0 32px 64px -20px rgba(40, 114, 161, 0.55);
+    transform: translateY(-4px) scale(1.01);
+  }
+
+  /* Smooth fade animations */
   .animate-fade-in {
-    animation: fadeIn 0.6s ease-out forwards;
+    animation: fadeIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   }
 
   .animate-fade-in-up {
-    animation: fadeInUp 0.7s ease-out forwards;
+    animation: fadeInUp 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   }
 
   .animate-slide-in-left {
-    animation: slideInLeft 0.4s ease-out forwards;
+    animation: slideInLeft 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   }
 
+  /* New smooth animations */
+  .animate-scale-in {
+    animation: scaleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  .animate-pulse-subtle {
+    animation: pulseSubtle 3s ease-in-out infinite;
+  }
+
+  /* Enhanced stat card with smooth interactions */
   .stat-card {
-    @apply bg-card rounded-xl border p-6 transition-all duration-200;
-    background: linear-gradient(150deg, hsl(0 0% 100%), hsl(210 28% 98%));
-    box-shadow: 0 8px 24px -18px hsl(217 48% 24% / 0.45);
+    @apply rounded-[24px] border p-6 transition-all duration-300 ease-out backdrop-blur-xl;
+    background: linear-gradient(150deg, hsl(0 0% 100% / 0.48), hsl(0 0% 100% / 0.28));
+    border-color: hsl(0 0% 100% / 0.50);
+    box-shadow: 0 18px 32px -18px rgba(40, 114, 161, 0.50);
   }
 
   .stat-card:hover {
-    box-shadow: 0 4px 20px -4px hsl(var(--primary) / 0.15);
-    transform: translateY(-2px);
+    background: linear-gradient(150deg, hsl(0 0% 100% / 0.58), hsl(0 0% 100% / 0.38));
+    box-shadow: 0 28px 48px -20px rgba(40, 114, 161, 0.65);
+    transform: translateY(-5px) scale(1.02);
+    border-color: hsl(0 0% 100% / 0.65);
+  }
+
+  /* Smooth button transitions */
+  .btn-smooth {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .btn-smooth:hover {
+    @apply transform scale-105;
+  }
+
+  .btn-smooth:active {
+    @apply transform scale-95;
+  }
+
+  /* Smooth link transitions */
+  .link-smooth {
+    @apply transition-all duration-250 ease-out;
+  }
+
+  /* Input smooth focus */
+  input, textarea, select {
+    @apply transition-all duration-200 ease-out;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    @apply ring-2 ring-offset-0;
+  }
+
+  /* Smooth page transitions */
+  .page-enter {
+    animation: pageEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  .page-exit {
+    animation: pageExit 0.3s cubic-bezier(0.7, 0, 0.84, 0) forwards;
   }
 }
 
@@ -138,11 +208,83 @@
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { 
+    opacity: 0; 
+    transform: translateY(30px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
 }
 
 @keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
+  from { 
+    opacity: 0; 
+    transform: translateX(-40px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateX(0); 
+  }
+}
+
+@keyframes slideInRight {
+  from { 
+    opacity: 0; 
+    transform: translateX(40px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateX(0); 
+  }
+}
+
+@keyframes scaleIn {
+  from { 
+    opacity: 0; 
+    transform: scale(0.92);
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseSubtle {
+  0%, 100% { 
+    opacity: 1;
+  }
+  50% { 
+    opacity: 0.8;
+  }
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pageExit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+/* Smooth scroll on macOS-like devices */
+@supports (scroll-behavior: smooth) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
