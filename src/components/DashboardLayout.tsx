@@ -31,6 +31,7 @@ const navItems: Record<string, NavItem[]> = {
     { label: "Book Appointment", path: "/receptionist/appointment", icon: <CalendarPlus className="w-5 h-5" /> },
     { label: "Billing", path: "/receptionist/billing", icon: <Receipt className="w-5 h-5" /> },
     { label: "Room Occupancy", path: "/receptionist/rooms", icon: <BedDouble className="w-5 h-5" /> },
+    { label: "Pharmacy", path: "/receptionist/pharmacy", icon: <Pill className="w-5 h-5" /> },
   ],
   doctor: [
     { label: "Dashboard", path: "/doctor", icon: <LayoutDashboard className="w-5 h-5" /> },

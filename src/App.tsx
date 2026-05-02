@@ -17,6 +17,7 @@ import PatientProfile from "./pages/receptionist/PatientProfile.tsx";
 import BookAppointment from "./pages/receptionist/BookAppointment";
 import Billing from "./pages/receptionist/Billing";
 import RoomOccupancy from "./pages/receptionist/RoomOccupancy";
+import PharmacyOverview from "./pages/receptionist/PharmacyOverview";
 
 import DoctorDashboard from "./pages/doctor/Dashboard";
 import SearchPatient from "./pages/doctor/SearchPatient";
@@ -53,6 +54,7 @@ const App = () => (
             <Route path="/receptionist/appointment" element={<ProtectedRoute allowedRoles={["receptionist"]}><BookAppointment /></ProtectedRoute>} />
             <Route path="/receptionist/billing" element={<ProtectedRoute allowedRoles={["receptionist"]}><Billing /></ProtectedRoute>} />
             <Route path="/receptionist/rooms" element={<ProtectedRoute allowedRoles={["receptionist"]}><RoomOccupancy /></ProtectedRoute>} />
+            <Route path="/receptionist/pharmacy" element={<ProtectedRoute allowedRoles={["receptionist"]}><PharmacyOverview /></ProtectedRoute>} />
 
             {/* Doctor */}
             <Route path="/doctor" element={<ProtectedRoute allowedRoles={["doctor"]}><DoctorDashboard /></ProtectedRoute>} />
