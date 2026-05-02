@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/DashboardLayout";
-import { patients, appointments, bills, type Appointment } from "@/data/mockData";
-import { Users, CalendarCheck, Receipt, Activity, Search, Filter, ClipboardList, UserPlus, CalendarPlus, IndianRupee, Download, Clock3, UserCheck2, Gauge, RefreshCcw, Hospital, BellRing, UserRoundPlus } from "lucide-react";
+import { appointments, bills, type Appointment } from "@/data/mockData";
+import { getPatients, generatePatientId, savePatient, pushAuditLog as storagePushAuditLog, createBillDraftFromAppointment } from "@/lib/storage";
+import { getClinicSettings } from "@/pages/admin/ClinicSettings";
+import { Users, CalendarCheck, Receipt, Activity, Search, Filter, ClipboardList, UserPlus, CalendarPlus, IndianRupee, Clock3, UserCheck2, Gauge, RefreshCcw, Hospital, BellRing, UserRoundPlus } from "lucide-react";
 import { toast } from "sonner";
 
 type LocalAppointmentStatus = Appointment["status"] | "Checked In" | "No Show";
@@ -45,11 +47,18 @@ interface RoomOccupancyRow {
 
 const getInitialDashboardDate = () => {
   const today = new Date().toISOString().split("T")[0];
-  const hasToday = appointments.some((appointment) => appointment.date === today);
-  if (hasToday) return today;
-
-  const sortedDates = [...new Set(appointments.map((appointment) => appointment.date))].sort((a, b) => b.localeCompare(a));
-  return sortedDates[0] ?? today;
+  // Check both mock and localStorage appointments
+  let allDates = appointments.map((a) => a.date);
+  try {
+    const raw = window.localStorage.getItem("medcore-receptionist-appointments");
+    if (raw) {
+      const parsed = JSON.parse(raw) as { date: string }[];
+      if (Array.isArray(parsed)) allDates = [...allDates, ...parsed.map((a) => a.date)];
+    }
+  } catch { /* ignore */ }
+  if (allDates.includes(today)) return today;
+  const sorted = [...new Set(allDates)].sort((a, b) => b.localeCompare(a));
+  return sorted[0] ?? today;
 };
 
 const getPriorityClass = (priority: PatientPriority) => {
@@ -61,6 +70,16 @@ const getPriorityClass = (priority: PatientPriority) => {
 
 const ReceptionistDashboard = () => {
   const navigate = useNavigate();
+  const [allPatients, setAllPatients] = useState(() => getPatients());
+  const [clockTime, setClockTime] = useState(() => new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+
+  // Live clock
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setClockTime(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
   const [localAppointments, setLocalAppointments] = useState<LocalAppointment[]>(() => {
     if (typeof window === "undefined") return appointments.map((appointment) => ({ ...appointment }));
 
@@ -206,11 +225,43 @@ const ReceptionistDashboard = () => {
   );
 
   const stats = [
-    { label: "Total Patients", value: patients.length, icon: <Users className="w-6 h-6" />, color: "text-primary" },
+    { label: "Total Patients", value: allPatients.length, icon: <Users className="w-6 h-6" />, color: "text-primary" },
     { label: "Appointments (Selected Date)", value: dateAppointments.length, icon: <CalendarCheck className="w-6 h-6" />, color: "text-success" },
     { label: "Pending Bills", value: pendingBills.length, icon: <Receipt className="w-6 h-6" />, color: "text-warning" },
     { label: "Completed", value: queueMetrics.completed, icon: <Activity className="w-6 h-6" />, color: "text-accent" },
   ];
+
+  const printOPDSlip = (appointment: LocalAppointment) => {
+    const clinic = getClinicSettings();
+    const win = window.open("", "_blank", "width=420,height=380");
+    if (!win) return;
+    win.document.write(`<html><head><title>OPD Slip</title>
+    <style>body{font-family:Arial,sans-serif;padding:20px;color:#0f172a;font-size:13px}
+    .header{font-size:17px;font-weight:700;color:#1e5a80;margin-bottom:2px}
+    .sub{font-size:11px;color:#64748b;margin-bottom:14px}
+    .token{font-size:42px;font-weight:900;color:#1e5a80;text-align:center;margin:10px 0;letter-spacing:-1px}
+    .row{display:flex;gap:8px;margin-bottom:5px;font-size:12px}
+    .label{color:#64748b;min-width:100px}
+    .value{font-weight:600}
+    .divider{border:none;border-top:1px dashed #cbd5e1;margin:12px 0}
+    .footer{font-size:10px;color:#94a3b8;text-align:center;margin-top:14px}
+    </style></head><body>
+    <div class="header">${clinic.name}</div>
+    <div class="sub">${clinic.phone}${clinic.address ? " · " + clinic.address : ""}</div>
+    <div class="sub">${new Date().toLocaleString()}</div>
+    <hr class="divider"/>
+    <div class="token">Token #${appointment.token}</div>
+    <hr class="divider"/>
+    <div class="row"><span class="label">Patient</span><span class="value">${appointment.patientName}</span></div>
+    <div class="row"><span class="label">Patient ID</span><span class="value">${appointment.patientId}</span></div>
+    <div class="row"><span class="label">Doctor</span><span class="value">${appointment.doctor}</span></div>
+    <div class="row"><span class="label">Date</span><span class="value">${appointment.date}</span></div>
+    <div class="row"><span class="label">Time</span><span class="value">${appointment.time}</span></div>
+    <div class="row"><span class="label">Type</span><span class="value">${(appointment as LocalAppointment & { appointmentType?: string }).appointmentType ?? "OPD"}</span></div>
+    <div class="footer">Please show this slip at the doctor's cabin. ${clinic.name}</div>
+    <script>window.onload=()=>{window.print()}</script></body></html>`);
+    win.document.close();
+  };
 
   const updateAppointmentStatus = (appointmentId: string, status: LocalAppointmentStatus) => {
     setLocalAppointments((prev) => prev.map((appointment) => (
@@ -219,6 +270,10 @@ const ReceptionistDashboard = () => {
 
     const target = localAppointments.find((appointment) => appointment.id === appointmentId);
     if (target) {
+      // Auto-print OPD slip on Check In
+      if (status === "Checked In") {
+        printOPDSlip(target);
+      }
       const nextLogs: AuditLog[] = [
         {
           id: `AL-${Date.now()}`,
@@ -376,6 +431,15 @@ const ReceptionistDashboard = () => {
     updateAppointmentStatus(checkedIn.id, "Completed");
     setActiveTokenId(null);
 
+    // Auto-create bill draft for completed appointment
+    createBillDraftFromAppointment({
+      patientId: checkedIn.patientId,
+      patientName: checkedIn.patientName,
+      appointmentId: checkedIn.id,
+      doctor: checkedIn.doctor,
+      date: checkedIn.date,
+    });
+
     const nextLogs: AuditLog[] = [
       {
         id: `AL-${Date.now()}`,
@@ -387,7 +451,7 @@ const ReceptionistDashboard = () => {
     ].slice(0, 80);
     setAuditLogs(nextLogs.slice(0, 12));
     window.localStorage.setItem(AUDIT_LOGS_STORAGE_KEY, JSON.stringify(nextLogs));
-    toast.success("Current token marked as completed.");
+    toast.success("Visit completed. Bill draft created in Billing.");
   };
 
   const resetFilters = () => {
@@ -413,9 +477,23 @@ const ReceptionistDashboard = () => {
       .filter((appointment) => appointment.doctor === walkInForm.doctor)
       .reduce((maxToken, appointment) => Math.max(maxToken, appointment.token), 0) + 1;
 
+    // Save walk-in as a real patient in storage
+    const newPatientId = generatePatientId();
+    const newPatient = {
+      id: newPatientId,
+      name,
+      phone: phone.replace(/\D/g, "") || "0000000000",
+      age: 0,
+      gender: "Other" as const,
+      symptoms: walkInForm.symptoms.trim() || "Walk-in",
+      registeredAt: new Date().toISOString().split("T")[0],
+    };
+    savePatient(newPatient);
+    setAllPatients(getPatients());
+
     const walkInAppointment: LocalAppointment = {
       id: `A-WI-${Date.now().toString().slice(-6)}`,
-      patientId: `W-${Date.now().toString().slice(-5)}`,
+      patientId: newPatientId,
       patientName: name,
       doctor: walkInForm.doctor,
       date: selectedDate,
@@ -438,9 +516,10 @@ const ReceptionistDashboard = () => {
     ].slice(0, 80);
     setAuditLogs(nextLogs.slice(0, 12));
     window.localStorage.setItem(AUDIT_LOGS_STORAGE_KEY, JSON.stringify(nextLogs));
+    storagePushAuditLog("walkin.added", `${name} | ${walkInForm.doctor} | Token ${nextToken}`);
 
     setWalkInForm({ name: "", phone: "", symptoms: "", doctor: walkInForm.doctor, priority: "Normal" });
-    toast.success("Walk-in patient added to queue.");
+    toast.success(`Walk-in ${name} added to queue. Patient ID: ${newPatientId}`);
   };
 
   const admitCheckedInPatient = () => {
@@ -509,10 +588,6 @@ const ReceptionistDashboard = () => {
     navigate(`/receptionist/patient/${encodeURIComponent(patientId)}`);
   };
 
-  const openDoctorProfile = (doctorName: string) => {
-    navigate(`/receptionist/doctor/${encodeURIComponent(doctorName)}`);
-  };
-
   return (
     <DashboardLayout>
       <div className="mx-auto w-full max-w-[1320px] animate-fade-in-up">
@@ -521,6 +596,16 @@ const ReceptionistDashboard = () => {
             <div>
               <h1 className="dashboard-title text-[#2872a1]">Reception desk operations</h1>
               <p className="mt-1 text-xs font-medium text-slate-500">Live queue control, billing follow-up, and appointment command center.</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="rounded-xl border border-white/50 bg-white/40 px-4 py-2 text-center backdrop-blur-md">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Desk Time</p>
+                <p className="font-mono text-base font-bold text-[#2872a1]">{clockTime}</p>
+              </div>
+              <div className="rounded-xl border border-white/50 bg-white/40 px-4 py-2 text-center backdrop-blur-md">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Date</p>
+                <p className="text-sm font-bold text-slate-800">{new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</p>
+              </div>
             </div>
           </section>
 
@@ -549,7 +634,7 @@ const ReceptionistDashboard = () => {
                     </button>
                   </div>
                   <div className="mt-3 grid grid-cols-2 gap-3 text-xs text-slate-600">
-                    <div className="rounded-xl bg-gradient-to-br from-white/40 to-white/20 backdrop-blur-md p-3 border border-white/40"><p className="text-slate-500">Total patients</p><p className="text-lg font-bold text-[#2872a1] mt-1">{patients.length}</p></div>
+                    <div className="rounded-xl bg-gradient-to-br from-white/40 to-white/20 backdrop-blur-md p-3 border border-white/40"><p className="text-slate-500">Total patients</p><p className="text-lg font-bold text-[#2872a1] mt-1">{allPatients.length}</p></div>
                     <div className="rounded-xl bg-gradient-to-br from-white/40 to-white/20 backdrop-blur-md p-3 border border-white/40"><p className="text-slate-500">Today appointments</p><p className="text-lg font-bold text-[#2872a1] mt-1">{dateAppointments.length}</p></div>
                     <div className="rounded-xl bg-gradient-to-br from-white/40 to-white/20 backdrop-blur-md p-3 border border-white/40"><p className="text-slate-500">Checked in</p><p className="text-lg font-bold text-[#2872a1] mt-1">{queueMetrics.checkedIn}</p></div>
                     <div className="rounded-xl bg-gradient-to-br from-white/40 to-white/20 backdrop-blur-md p-3 border border-white/40"><p className="text-slate-500">Waiting</p><p className="text-lg font-bold text-[#2872a1] mt-1">{queueMetrics.waiting}</p></div>
@@ -561,12 +646,21 @@ const ReceptionistDashboard = () => {
                 <div className="grid grid-cols-1 gap-3 border-b border-white/40 pb-4 sm:grid-cols-2 lg:grid-cols-4">
                   <label className="space-y-1">
                     <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#2872a1]"><CalendarCheck className="h-3.5 w-3.5" /> Date</span>
-                    <input
-                      type="date"
-                      value={selectedDate}
-                      onChange={(e) => setSelectedDate(e.target.value)}
-                      className="h-10 w-full rounded-lg border border-white/50 px-3 text-sm text-slate-700 bg-white/60 backdrop-blur-sm focus:border-[#2872a1] focus:outline-none focus:bg-white/80 transition-all duration-300"
-                    />
+                    <div className="flex gap-1.5">
+                      <input
+                        type="date"
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        className="h-10 w-full rounded-lg border border-white/50 px-3 text-sm text-slate-700 bg-white/60 backdrop-blur-sm focus:border-[#2872a1] focus:outline-none focus:bg-white/80 transition-all duration-300"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setSelectedDate(new Date().toISOString().split("T")[0])}
+                        className="h-10 shrink-0 rounded-lg border border-white/50 bg-white/60 px-2.5 text-xs font-semibold text-[#2872a1] hover:bg-white/80 transition-all"
+                      >
+                        Today
+                      </button>
+                    </div>
                   </label>
 
                   <label className="space-y-1">
@@ -670,13 +764,13 @@ const ReceptionistDashboard = () => {
                     <input
                       value={walkInForm.name}
                       onChange={(e) => setWalkInForm((prev) => ({ ...prev, name: e.target.value }))}
-                      placeholder="Patient name"
+                      placeholder="Patient name *"
                       className="h-9 rounded-lg border border-white/50 bg-white/70 px-2 text-xs text-slate-700 sm:col-span-2"
                     />
                     <input
                       value={walkInForm.phone}
                       onChange={(e) => setWalkInForm((prev) => ({ ...prev, phone: e.target.value }))}
-                      placeholder="Phone"
+                      placeholder="Phone (optional)"
                       className="h-9 rounded-lg border border-white/50 bg-white/70 px-2 text-xs text-slate-700"
                     />
                     <select
@@ -684,7 +778,7 @@ const ReceptionistDashboard = () => {
                       onChange={(e) => setWalkInForm((prev) => ({ ...prev, doctor: e.target.value }))}
                       className="h-9 rounded-lg border border-white/50 bg-white/70 px-2 text-xs text-slate-700"
                     >
-                      <option value="">Doctor</option>
+                      <option value="">Doctor *</option>
                       {doctorOptions.filter((doctor) => doctor !== "All").map((doctor) => (
                         <option key={doctor} value={doctor}>{doctor}</option>
                       ))}
@@ -700,6 +794,12 @@ const ReceptionistDashboard = () => {
                       <option value="Follow-up">Follow-up</option>
                     </select>
                   </div>
+                  <input
+                    value={walkInForm.symptoms}
+                    onChange={(e) => setWalkInForm((prev) => ({ ...prev, symptoms: e.target.value }))}
+                    placeholder="Chief complaint / symptoms (optional)"
+                    className="mt-2 h-9 w-full rounded-lg border border-white/50 bg-white/70 px-2 text-xs text-slate-700"
+                  />
                   <button
                     onClick={quickAddWalkIn}
                     className="mt-2 rounded-full bg-gradient-to-r from-[#2872a1] to-[#1a4d73] px-3.5 py-2 text-xs font-semibold text-white transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95"
@@ -728,12 +828,7 @@ const ReceptionistDashboard = () => {
                           </button>
                           <div className="text-[11px] text-slate-500">
                             {appointment.time} |
-                            <button
-                              onClick={() => openDoctorProfile(appointment.doctor)}
-                              className="ml-1 font-semibold text-[#2872a1] hover:underline"
-                            >
-                              {appointment.doctor}
-                            </button>
+                            <span class="ml-1 font-semibold text-slate-700">{appointment.doctor}</span>
                           </div>
                         </div>
                         <button
@@ -763,12 +858,7 @@ const ReceptionistDashboard = () => {
                             Token {appointment.token} - {appointment.patientName}
                           </button>
                           <div className="text-xs text-slate-500">
-                            <button
-                              onClick={() => openDoctorProfile(appointment.doctor)}
-                              className="font-semibold text-[#2872a1] hover:underline"
-                            >
-                              {appointment.doctor}
-                            </button>
+                            <span class="font-semibold text-slate-700">{appointment.doctor}</span>
                             <span> | {appointment.time}</span>
                           </div>
                         </div>
@@ -819,12 +909,7 @@ const ReceptionistDashboard = () => {
                             </span>
                           </td>
                           <td className="px-4 py-3 text-slate-700">
-                            <button
-                              onClick={() => openDoctorProfile(appointment.doctor)}
-                              className="font-semibold text-[#2872a1] hover:underline"
-                            >
-                              {appointment.doctor}
-                            </button>
+                            <span class="font-semibold text-slate-700">{appointment.doctor}</span>
                           </td>
                           <td className="px-4 py-3 text-slate-700">{appointment.time}</td>
                           <td className="px-4 py-3">

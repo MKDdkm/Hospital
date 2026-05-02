@@ -70,10 +70,13 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif;
+    background-color: #cbdde9;
     background-image:
-      radial-gradient(circle at 8% 8%, hsl(205 43% 95% / 0.95), transparent 32%),
-      radial-gradient(circle at 92% 88%, hsl(204 60% 40% / 0.15), transparent 38%),
-      linear-gradient(150deg, hsl(var(--dashboard-bg-start)), hsl(206 40% 94%));
+      radial-gradient(circle, #7aafc8 1px, transparent 1px),
+      radial-gradient(circle at 20% 20%, hsl(205 60% 75% / 0.35), transparent 45%),
+      radial-gradient(circle at 80% 80%, hsl(204 60% 40% / 0.18), transparent 45%),
+      linear-gradient(150deg, #d4e6f1, #b8d4e8);
+    background-size: 28px 28px, 100% 100%, 100% 100%, 100% 100%;
     background-attachment: fixed;
   }
 

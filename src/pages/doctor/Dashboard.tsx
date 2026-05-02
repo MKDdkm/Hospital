@@ -1,9 +1,11 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/DashboardLayout";
-import { appointments, bills, doctors, patients, prescriptions, type Appointment } from "@/data/mockData";
+import { appointments, bills, doctors, prescriptions, type Appointment } from "@/data/mockData";
+import { getPatients, pushAuditLog } from "@/lib/storage";
 import { useAuth } from "@/contexts/AuthContext";
-import { CalendarCheck, Clock3, FileText, Pill, Search, Stethoscope, UserRound, Users } from "lucide-react";
+import { CalendarCheck, Clock3, FileText, Search, Stethoscope, UserRound, Users, CheckCircle2, FilePlus } from "lucide-react";
+import { toast } from "sonner";
 
 const APPOINTMENTS_STORAGE_KEY = "medcore-receptionist-appointments";
 const PRESCRIPTIONS_STORAGE_KEY = "medcore-doctor-prescriptions";
@@ -57,18 +59,27 @@ const DoctorDashboard = () => {
   const navigate = useNavigate();
   const { email } = useAuth();
 
-  const localAppointments = useMemo<DashboardAppointment[]>(() => {
-    if (typeof window === "undefined") return appointments.map((appointment) => ({ ...appointment }));
-
+  const [localAppointments, setLocalAppointments] = useState<DashboardAppointment[]>(() => {
+    if (typeof window === "undefined") return appointments.map((a) => ({ ...a }));
     try {
       const raw = window.localStorage.getItem(APPOINTMENTS_STORAGE_KEY);
-      if (!raw) return appointments.map((appointment) => ({ ...appointment }));
+      if (!raw) return appointments.map((a) => ({ ...a }));
       const parsed = JSON.parse(raw) as DashboardAppointment[];
-      return Array.isArray(parsed) ? parsed : appointments.map((appointment) => ({ ...appointment }));
+      return Array.isArray(parsed) ? parsed : appointments.map((a) => ({ ...a }));
     } catch {
-      return appointments.map((appointment) => ({ ...appointment }));
+      return appointments.map((a) => ({ ...a }));
     }
-  }, []);
+  });
+
+  const markCompleted = (appointmentId: string) => {
+    setLocalAppointments((prev) => {
+      const next = prev.map((a) => a.id === appointmentId ? { ...a, status: "Completed" as LocalAppointmentStatus } : a);
+      window.localStorage.setItem(APPOINTMENTS_STORAGE_KEY, JSON.stringify(next));
+      return next;
+    });
+    pushAuditLog("doctor.appointment.completed", `Appointment ${appointmentId} marked completed`);
+    toast.success("Appointment marked as completed.");
+  };
 
   const activeDoctor = useMemo(() => resolveDoctorFromEmail(email), [email]);
   const activeDate = useMemo(() => getLatestDate(localAppointments), [localAppointments]);
@@ -89,7 +100,7 @@ const DoctorDashboard = () => {
   );
 
   const myPatients = useMemo(
-    () => patients.filter((patient) => myPatientIds.includes(patient.id)),
+    () => getPatients().filter((patient) => myPatientIds.includes(patient.id)),
     [myPatientIds],
   );
 
@@ -117,6 +128,14 @@ const DoctorDashboard = () => {
     } catch {
       return {};
     }
+  }, []);
+
+  // Pharmacy workflow — dispensed status feedback
+  const pharmacyWorkflow = useMemo<Record<string, { dispensedAt?: string; acceptedAt?: string }>>(() => {
+    try {
+      const raw = window.localStorage.getItem("medcore-pharmacy-workflow");
+      return raw ? JSON.parse(raw) : {};
+    } catch { return {}; }
   }, []);
 
   const myBillingAmount = useMemo(
@@ -158,6 +177,10 @@ const DoctorDashboard = () => {
     [myLocalPrescriptions, pharmacyDispatch],
   );
   const pendingPharmacyCount = myLocalPrescriptions.length - sentToPharmacyCount;
+  const dispensedCount = useMemo(
+    () => myLocalPrescriptions.filter((entry) => pharmacyWorkflow[entry.id]?.dispensedAt).length,
+    [myLocalPrescriptions, pharmacyWorkflow],
+  );
 
   return (
     <DashboardLayout>
@@ -169,29 +192,21 @@ const DoctorDashboard = () => {
             <p className="mt-1 text-sm text-white/85">Showing only your appointments, patients, and clinical workload.</p>
           </section>
 
-          <section className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
-            <button
-              type="button"
-              onClick={() => navigate("/doctor/prescribe")}
-              className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
-            >
-              <p className="inline-flex items-center gap-1 text-sm font-semibold text-[#2872a1]"><Pill className="h-4 w-4" /> Add Prescription</p>
-              <p className="mt-1 text-xs text-slate-500">Write and send medicine plans in one flow.</p>
-            </button>
+          <section className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
             <button
               type="button"
               onClick={() => navigate("/doctor/prescriptions")}
               className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
             >
-              <p className="inline-flex items-center gap-1 text-sm font-semibold text-[#2872a1]"><FileText className="h-4 w-4" /> Review Prescription Status</p>
-              <p className="mt-1 text-xs text-slate-500">Track pharmacy-sent and pending prescriptions.</p>
+              <p className="inline-flex items-center gap-1 text-sm font-semibold text-[#2872a1]"><FileText className="h-4 w-4" /> Prescription Status</p>
+              <p className="mt-1 text-xs text-slate-500">Track pharmacy-sent and dispensed prescriptions.</p>
             </button>
             <button
               type="button"
               onClick={() => navigate("/doctor/search")}
               className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
             >
-              <p className="inline-flex items-center gap-1 text-sm font-semibold text-[#2872a1]"><Search className="h-4 w-4" /> Search Patient Fast</p>
+              <p className="inline-flex items-center gap-1 text-sm font-semibold text-[#2872a1]"><Search className="h-4 w-4" /> Search Patient</p>
               <p className="mt-1 text-xs text-slate-500">Open chart details quickly from doctor workspace.</p>
             </button>
           </section>
@@ -210,7 +225,7 @@ const DoctorDashboard = () => {
             <article className="rounded-2xl border border-white/60 bg-white/50 p-4 transition-all duration-300 hover:bg-white/70">
               <p className="text-xs font-semibold text-slate-500">My Prescriptions</p>
               <p className="mt-2 text-2xl font-bold text-slate-900">{combinedPrescriptionCount}</p>
-              <p className="mt-1 text-xs text-slate-600">Mock + live authored by you</p>
+              <p className="mt-1 text-xs text-slate-600">Total authored by you</p>
             </article>
             <article className="rounded-2xl border border-white/60 bg-white/50 p-4 transition-all duration-300 hover:bg-white/70">
               <p className="text-xs font-semibold text-slate-500">Completion Rate</p>
@@ -228,18 +243,34 @@ const DoctorDashboard = () => {
               <div className="space-y-2">
                 {upcomingQueue.length === 0 && <p className="text-xs text-slate-500">No active queue items for you today.</p>}
                 {upcomingQueue.map((appointment) => (
-                  <div key={appointment.id} className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2">
-                    <div>
-                      <p className="text-xs font-semibold text-slate-800">Token {appointment.token} - {appointment.patientName}</p>
-                      <p className="mt-0.5 text-[11px] text-slate-500">{appointment.time}</p>
+                  <div key={appointment.id} className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs font-semibold text-slate-800">Token {appointment.token} — {appointment.patientName}</p>
+                        <p className="mt-0.5 text-[11px] text-slate-500">{appointment.time} · {appointment.patientId}</p>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${priorityClass(appointment.priority)}`}>
+                          {appointment.priority ?? "Normal"}
+                        </span>
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${statusClass[appointment.status]}`}>
+                          {appointment.status}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${priorityClass(appointment.priority)}`}>
-                        {appointment.priority ?? "Normal"}
-                      </span>
-                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${statusClass[appointment.status]}`}>
-                        {appointment.status}
-                      </span>
+                    <div className="flex gap-1.5">
+                      <button
+                        onClick={() => navigate(`/doctor/write-rx?patientId=${appointment.patientId}&patientName=${encodeURIComponent(appointment.patientName)}`)}
+                        className="inline-flex items-center gap-1 rounded-full border border-[#2872a1]/30 bg-[#2872a1]/5 px-2.5 py-1 text-[11px] font-semibold text-[#2872a1] hover:bg-[#2872a1]/10 transition-all"
+                      >
+                        <FilePlus className="h-3 w-3" /> Write Rx
+                      </button>
+                      <button
+                        onClick={() => markCompleted(appointment.id)}
+                        className="inline-flex items-center gap-1 rounded-full border border-emerald-300 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700 hover:bg-emerald-100 transition-all"
+                      >
+                        <CheckCircle2 className="h-3 w-3" /> Mark Done
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -268,7 +299,7 @@ const DoctorDashboard = () => {
                   <p className="inline-flex items-center gap-1 font-semibold"><FileText className="h-3.5 w-3.5 text-[#2872a1]" /> Revenue touchpoints: ₹{myBillingAmount.toLocaleString()}</p>
                 </div>
                 <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700">
-                  <p className="inline-flex items-center gap-1 font-semibold"><Pill className="h-3.5 w-3.5 text-[#2872a1]" /> Sent to pharmacy: {sentToPharmacyCount} • Pending send: {pendingPharmacyCount}</p>
+                  <p className="inline-flex items-center gap-1 font-semibold"><Stethoscope className="h-3.5 w-3.5 text-[#2872a1]" /> Sent to pharmacy: {sentToPharmacyCount} • Pending: {pendingPharmacyCount} • Dispensed: {dispensedCount}</p>
                 </div>
               </div>
             </article>

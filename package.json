@@ -85,5 +85,18 @@
     "typescript-eslint": "^8.38.0",
     "vite": "^5.4.19",
     "vitest": "^3.2.4"
-  }
+  },
+  "description": "MedCore HMS - AI-Driven Hospital Management System (Phase-1)",
+  "main": "eslint.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MKDdkm/Hospital.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MKDdkm/Hospital/issues"
+  },
+  "homepage": "https://github.com/MKDdkm/Hospital#readme"
 }

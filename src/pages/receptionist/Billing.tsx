@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { bills, roomServiceRates, type RoomType } from "@/data/mockData";
-import { BedDouble, ReceiptText } from "lucide-react";
+import { BedDouble, ReceiptText, Printer } from "lucide-react";
+import { getClinicSettings } from "@/pages/admin/ClinicSettings";
 
 interface RoomServiceDraft {
   roomType: RoomType;
@@ -308,11 +309,12 @@ const Billing = () => {
     dueAmount: number;
     total: number;
   }) => {
+    const clinic = getClinicSettings();
     const printWindow = window.open("", "_blank", "width=900,height=700");
     if (!printWindow) return;
 
     const rows = params.items
-      .map((item) => `<tr><td style="padding:8px 0;border-bottom:1px solid #e5e7eb;">${item.description}</td><td style="padding:8px 0;border-bottom:1px solid #e5e7eb;text-align:right;">Rs ${item.amount.toLocaleString()}</td></tr>`)
+      .map((item) => `<tr><td style="padding:8px 0;border-bottom:1px solid #e5e7eb;">${item.description}</td><td style="padding:8px 0;border-bottom:1px solid #e5e7eb;text-align:right;">₹${item.amount.toLocaleString()}</td></tr>`)
       .join("");
 
     const html = `
@@ -320,43 +322,50 @@ const Billing = () => {
         <head>
           <title>Invoice ${params.billId}</title>
           <style>
-            body { font-family: Arial, sans-serif; color: #0f172a; padding: 24px; }
-            .header { display:flex; justify-content:space-between; align-items:center; margin-bottom: 18px; }
-            .title { font-size: 22px; font-weight: 700; }
-            .meta { font-size: 13px; color:#475569; }
-            table { width:100%; border-collapse: collapse; margin-top: 16px; }
-            th { text-align:left; border-bottom:2px solid #cbd5e1; padding:8px 0; }
-            .summary { margin-top: 16px; font-size: 14px; }
-            .summary p { margin: 6px 0; }
-            .grand { font-size: 16px; font-weight: 700; color:#1d4ed8; }
+            body{font-family:Arial,sans-serif;color:#0f172a;padding:28px;font-size:13px}
+            .clinic-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #cbd5e1;padding-bottom:12px;margin-bottom:16px}
+            .clinic-name{font-size:20px;font-weight:700;color:#1e5a80}
+            .clinic-sub{font-size:11px;color:#64748b;margin-top:2px}
+            .invoice-title{font-size:16px;font-weight:700;color:#1e5a80;margin-bottom:4px}
+            table{width:100%;border-collapse:collapse;margin-top:12px}
+            th{text-align:left;border-bottom:2px solid #cbd5e1;padding:8px 0;font-size:11px;color:#64748b;text-transform:uppercase}
+            .summary{margin-top:16px;border-top:1px solid #e2e8f0;padding-top:12px}
+            .grand{font-size:16px;font-weight:700;color:#1d4ed8;margin-top:6px}
+            .footer{margin-top:20px;font-size:10px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:10px;text-align:center}
+            .status-paid{color:#059669;font-weight:700}
+            .status-due{color:#dc2626;font-weight:700}
           </style>
         </head>
         <body>
-          <div class="header">
+          <div class="clinic-header">
             <div>
-              <div class="title">MedCore HMS Invoice</div>
-              <div class="meta">Bill ID: ${params.billId}</div>
+              <div class="clinic-name">${clinic.name}</div>
+              <div class="clinic-sub">${clinic.tagline}</div>
+              <div class="clinic-sub">${clinic.address}${clinic.city ? ", " + clinic.city : ""}${clinic.pincode ? " — " + clinic.pincode : ""}</div>
+              <div class="clinic-sub">${clinic.phone}${clinic.email ? " · " + clinic.email : ""}</div>
             </div>
-            <div class="meta">Date: ${params.date}</div>
+            <div style="text-align:right">
+              <div class="invoice-title">INVOICE</div>
+              <div class="clinic-sub">Bill ID: <strong>${params.billId}</strong></div>
+              <div class="clinic-sub">Date: ${params.date}</div>
+              ${clinic.registrationNumber ? `<div class="clinic-sub">Reg: ${clinic.registrationNumber}</div>` : ""}
+            </div>
           </div>
-          <div class="meta">Patient: ${params.patientName}</div>
+          <div style="margin-bottom:12px;font-size:13px">
+            <strong>Patient:</strong> ${params.patientName}
+          </div>
           <table>
-            <thead>
-              <tr>
-                <th>Description</th>
-                <th style="text-align:right;">Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${rows}
-            </tbody>
+            <thead><tr><th>Description</th><th style="text-align:right">Amount</th></tr></thead>
+            <tbody>${rows}</tbody>
           </table>
           <div class="summary">
-            <p class="grand">Patient Payable: Rs ${params.total.toLocaleString()}</p>
-            <p>Amount Paid: Rs ${params.paidAmount.toLocaleString()}</p>
-            <p>Balance Due: Rs ${params.dueAmount.toLocaleString()}</p>
+            <p class="grand">Total Payable: ₹${params.total.toLocaleString()}</p>
+            <p>Amount Paid: <span class="status-paid">₹${params.paidAmount.toLocaleString()}</span></p>
+            <p>Balance Due: <span class="${params.dueAmount > 0 ? "status-due" : "status-paid"}">₹${params.dueAmount.toLocaleString()}</span></p>
             <p>Payment Mode: ${params.paymentMode}</p>
           </div>
+          <div class="footer">${clinic.name} · ${clinic.phone} · Thank you for choosing us for your healthcare needs.</div>
+          <script>window.onload=()=>{window.print()}</script>
         </body>
       </html>
     `;
@@ -364,8 +373,6 @@ const Billing = () => {
     printWindow.document.open();
     printWindow.document.write(html);
     printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
     pushAuditLog("billing.invoice.print", `Printed invoice ${params.billId} for ${params.patientName}`);
   };
 
@@ -863,9 +870,9 @@ const Billing = () => {
                         dueAmount,
                         total: grandTotal,
                       })}
-                      className="rounded-lg border border-blue-200 bg-white px-3 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-50"
+                      className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-white px-4 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-50 transition-colors"
                     >
-                      Print Invoice
+                      <Printer className="h-3.5 w-3.5" /> Print Invoice
                     </button>
                   </div>
                 </div>

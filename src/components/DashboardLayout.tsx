@@ -1,19 +1,27 @@
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   LayoutDashboard, UserPlus, Users, CalendarPlus, Receipt,
-  Stethoscope, Search, FileText, PlusCircle,
-  UserCog, BarChart3, LogOut, Menu, ChevronRight, Building2, BedDouble, ClipboardCheck, Bell, Pill
+  Stethoscope, Search, FileText,
+  UserCog, BarChart3, LogOut, Menu, Building2, BedDouble, Bell, Pill, X,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 interface NavItem {
   label: string;
   path: string;
   icon: ReactNode;
+  badge?: boolean;
 }
+
+// ── Sidebar color per role ────────────────────────────────────────────────────
+const sidebarTheme: Record<string, { sidebar: string; accent: string; activeBg: string; hoverBg: string; topbar: string; content: string }> = {
+  receptionist: { sidebar: "bg-[#0f172a]", accent: "bg-blue-500", activeBg: "bg-blue-500", hoverBg: "hover:bg-blue-500/20", topbar: "bg-[#0f172a]", content: "bg-slate-50" },
+  doctor:       { sidebar: "bg-[#0f172a]", accent: "bg-blue-500", activeBg: "bg-blue-500", hoverBg: "hover:bg-blue-500/20", topbar: "bg-[#0f172a]", content: "bg-slate-50" },
+  admin:        { sidebar: "bg-[#0f172a]", accent: "bg-blue-500", activeBg: "bg-blue-500", hoverBg: "hover:bg-blue-500/20", topbar: "bg-[#0f172a]", content: "bg-slate-50" },
+  pharmacy:     { sidebar: "bg-[#0f172a]", accent: "bg-blue-500", activeBg: "bg-blue-500", hoverBg: "hover:bg-blue-500/20", topbar: "bg-[#0f172a]", content: "bg-slate-50" },
+};
 
 const navItems: Record<string, NavItem[]> = {
   receptionist: [
@@ -23,23 +31,21 @@ const navItems: Record<string, NavItem[]> = {
     { label: "Book Appointment", path: "/receptionist/appointment", icon: <CalendarPlus className="w-5 h-5" /> },
     { label: "Billing", path: "/receptionist/billing", icon: <Receipt className="w-5 h-5" /> },
     { label: "Room Occupancy", path: "/receptionist/rooms", icon: <BedDouble className="w-5 h-5" /> },
-    { label: "Closing Report", path: "/receptionist/closing-report", icon: <ClipboardCheck className="w-5 h-5" /> },
   ],
   doctor: [
     { label: "Dashboard", path: "/doctor", icon: <LayoutDashboard className="w-5 h-5" /> },
     { label: "Search Patient", path: "/doctor/search", icon: <Search className="w-5 h-5" /> },
     { label: "Patient History", path: "/doctor/history", icon: <FileText className="w-5 h-5" /> },
-    { label: "Add Prescription", path: "/doctor/prescribe", icon: <PlusCircle className="w-5 h-5" /> },
-    { label: "Prescriptions", path: "/doctor/prescriptions", icon: <Stethoscope className="w-5 h-5" /> },
+    { label: "My Prescriptions", path: "/doctor/prescriptions", icon: <Stethoscope className="w-5 h-5" /> },
   ],
   admin: [
     { label: "Dashboard", path: "/admin", icon: <LayoutDashboard className="w-5 h-5" /> },
     { label: "User Management", path: "/admin/users", icon: <UserCog className="w-5 h-5" /> },
     { label: "Reports", path: "/admin/reports", icon: <BarChart3 className="w-5 h-5" /> },
+    { label: "Clinic Settings", path: "/admin/settings", icon: <Building2 className="w-5 h-5" /> },
   ],
   pharmacy: [
-    { label: "Landing", path: "/pharmacy", icon: <LayoutDashboard className="w-5 h-5" /> },
-    { label: "Pharmacy Dashboard", path: "/pharmacy/dashboard", icon: <Pill className="w-5 h-5" /> },
+    { label: "Dashboard", path: "/pharmacy/dashboard", icon: <Pill className="w-5 h-5" />, badge: true },
   ],
 };
 
@@ -50,23 +56,9 @@ const roleLabels: Record<string, string> = {
   pharmacy: "Pharmacy",
 };
 
-const headerTitles: Record<string, string> = {
-  receptionist: "Patient profile",
-  doctor: "Doctor dashboard",
-  admin: "Admin command",
-  pharmacy: "Pharmacy operations",
-};
-
-const headerSubtitles: Record<string, string> = {
-  receptionist: "Front desk and queue flow",
-  doctor: "Care delivery and clinical queue",
-  admin: "Operations, users, and reporting",
-  pharmacy: "Prescription queue and dispensing control",
-};
-
-const receptionistDirectory: Record<string, { name: string; desk: string; shift: string; phone: string }> = {
-  "frontdesk@medcore.com": { name: "Neha Singh", desk: "Front Desk A", shift: "Morning (08:00 - 16:00)", phone: "+91 98765 42001" },
-  "reception@medcore.com": { name: "Pooja Desai", desk: "Front Desk B", shift: "Evening (14:00 - 22:00)", phone: "+91 98765 42002" },
+const receptionistDirectory: Record<string, string> = {
+  "frontdesk@medcore.com": "Neha Singh",
+  "reception@medcore.com": "Pooja Desai",
 };
 
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
@@ -74,162 +66,210 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [bellOpen, setBellOpen] = useState(false);
+
   const items = navItems[role || "receptionist"];
   const roleLabel = roleLabels[role || "receptionist"];
-  const headerTitle = headerTitles[role || "receptionist"];
-  const headerSubtitle = headerSubtitles[role || "receptionist"];
-  const receptionistProfile = role === "receptionist"
-    ? receptionistDirectory[(email || "").toLowerCase()] ?? {
-      name: email ? email.split("@")[0].replace(/[._-]/g, " ") : "Front Desk Executive",
-      desk: "Front Desk",
-      shift: "General Shift",
-      phone: "+91 90000 00000",
-    }
-    : null;
+  const theme = sidebarTheme[role || "receptionist"];
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
+  const displayName = useMemo(() => {
+    if (role === "receptionist") {
+      const name = receptionistDirectory[(email || "").toLowerCase()];
+      if (name) return name;
+    }
+    return email ? email.split("@")[0].replace(/[._-]/g, " ") : "User";
+  }, [role, email]);
+
+  const notifications = useMemo(() => {
+    const alerts: { text: string; type: "high" | "medium" | "info" }[] = [];
+    try {
+      const liveBillsRaw = window.localStorage.getItem("medcore-live-bills");
+      if (liveBillsRaw) {
+        const pending = (JSON.parse(liveBillsRaw) as { status: string }[]).filter((b) => b.status === "Pending");
+        if (pending.length > 0) alerts.push({ text: `${pending.length} pending bill${pending.length > 1 ? "s" : ""} need collection`, type: "high" });
+      }
+      const stockRaw = window.localStorage.getItem("medcore-pharmacy-stock");
+      if (stockRaw) {
+        const low = (JSON.parse(stockRaw) as { qty: number; minQty: number }[]).filter((s) => s.qty < s.minQty);
+        if (low.length > 0) alerts.push({ text: `${low.length} medicine${low.length > 1 ? "s" : ""} low in stock`, type: "medium" });
+      }
+      const dispatchRaw = window.localStorage.getItem("medcore-pharmacy-dispatch");
+      const workflowRaw = window.localStorage.getItem("medcore-pharmacy-workflow");
+      if (dispatchRaw) {
+        const dispatch = JSON.parse(dispatchRaw) as Record<string, { sent: boolean }>;
+        const workflow = workflowRaw ? JSON.parse(workflowRaw) as Record<string, { dispensedAt?: string; rejectedAt?: string }> : {};
+        const pending = Object.entries(dispatch).filter(([id, d]) => d.sent && !workflow[id]?.dispensedAt && !workflow[id]?.rejectedAt).length;
+        if (pending > 0) alerts.push({ text: `${pending} prescription${pending > 1 ? "s" : ""} pending in pharmacy`, type: "medium" });
+      }
+    } catch { /* ignore */ }
+    if (alerts.length === 0) alerts.push({ text: "All clear — no alerts", type: "info" });
+    return alerts;
+  }, [bellOpen]);
+
+  const pharmacyPendingCount = useMemo(() => {
+    if (role !== "pharmacy") return 0;
+    try {
+      const dispatch = JSON.parse(window.localStorage.getItem("medcore-pharmacy-dispatch") ?? "{}") as Record<string, { sent: boolean }>;
+      const workflow = JSON.parse(window.localStorage.getItem("medcore-pharmacy-workflow") ?? "{}") as Record<string, { dispensedAt?: string; rejectedAt?: string }>;
+      return Object.entries(dispatch).filter(([id, d]) => d.sent && !workflow[id]?.dispensedAt && !workflow[id]?.rejectedAt).length;
+    } catch { return 0; }
+  }, [role]);
+
+  const hasAlerts = notifications.some((n) => n.type !== "info");
+  const currentPage = items.find((i) => i.path === location.pathname)?.label ?? "Dashboard";
 
   return (
-    <div className="min-h-screen bg-[#cbdde9] px-3 py-4 sm:px-5 sm:py-6">
-      <div className="mx-auto flex min-h-[calc(100vh-2rem)] w-full max-w-[1480px] overflow-hidden rounded-[34px] border border-white/80 bg-[#cbdde9] shadow-[0_35px_90px_-46px_rgba(30,76,107,0.45)] sm:min-h-[calc(100vh-3rem)]">
+    <div className="flex h-screen overflow-hidden bg-slate-100">
       {/* Mobile overlay */}
       {sidebarOpen && (
-        <div className="fixed inset-0 z-30 bg-slate-950/45 backdrop-blur-sm lg:hidden" onClick={() => setSidebarOpen(false)} />
+        <div className="fixed inset-0 z-30 bg-black/70 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
-      {/* Sidebar */}
-      <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-white/30 bg-white/25 backdrop-blur-2xl shadow-[0_28px_70px_-40px_rgba(40,114,161,0.6)] transition-all duration-500 ease-out lg:static ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-        }`}
-      >
-        <div className="flex flex-col items-center gap-4 border-b border-white/20 px-7 py-10">
-          <div className="grid h-16 w-16 place-items-center rounded-2xl border-2 border-white/50 bg-white/50 backdrop-blur-md shadow-[0_14px_28px_-16px_rgba(40,114,161,0.6)]">
-            <Building2 className="h-7 w-7 text-[#1b5f8f]" />
+      {/* ══════════════════════════════════════════════════════
+          SIDEBAR
+      ══════════════════════════════════════════════════════ */}
+      <aside className={`fixed inset-y-0 left-0 z-40 flex w-64 min-w-[16rem] flex-col ${theme.sidebar} transition-transform duration-300 lg:static lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
+
+        {/* Logo */}
+        <div className="flex items-center justify-between px-5 h-16 border-b border-white/10 shrink-0">
+          <div className="flex items-center gap-3">
+            <div className={`grid h-8 w-8 place-items-center rounded-lg ${theme.accent}`}>
+              <Building2 className="h-4 w-4 text-white" />
+            </div>
+            <div>
+              <p className="text-[15px] font-bold text-white tracking-tight leading-none">Clinik</p>
+              <p className="text-[10px] text-white/40 uppercase tracking-[0.15em] mt-0.5">Hospital Suite</p>
+            </div>
           </div>
-          <div className="text-center">
-            <p className="font-display text-[34px] font-extrabold uppercase tracking-[0.12em] text-slate-900">Clinik</p>
-            <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-700">{roleLabel} workspace</p>
-          </div>
+          <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-white/40 hover:text-white transition-colors">
+            <X className="h-4 w-4" />
+          </button>
         </div>
 
-        <nav className="flex-1 space-y-1.5 px-4 py-4">
-          {items.map((item, idx) => {
+        {/* Role label */}
+        <div className="px-5 py-3 shrink-0">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">{roleLabel} Workspace</p>
+        </div>
+
+        {/* Nav items — fill all remaining height equally */}
+        <nav className="flex flex-col flex-1 overflow-hidden">
+          {items.map((item) => {
             const active = location.pathname === item.path;
             return (
               <Link
                 key={item.path}
                 to={item.path}
                 onClick={() => setSidebarOpen(false)}
-                style={{ animationDelay: `${idx * 30}ms` }}
-                className={`group flex items-center justify-between gap-3 rounded-xl px-4 py-3 text-[13px] font-extrabold uppercase tracking-[0.08em] backdrop-blur-sm border transition-all duration-300 ease-out hover:scale-105 active:scale-95 ${
+                className={`flex flex-1 w-full items-center justify-between gap-3 pl-5 pr-4 text-[13px] font-semibold transition-colors duration-150 ${
                   active
-                    ? "bg-white/85 border-white/60 text-[#1b5275] shadow-[0_14px_26px_-22px_rgba(40,114,161,0.55)]"
-                    : "border-white/30 bg-white/28 text-slate-700 hover:bg-white/45 hover:border-white/50 hover:text-[#2872a1]"
+                    ? `${theme.activeBg} text-white`
+                    : `text-slate-400 ${theme.hoverBg} hover:text-white`
                 }`}
               >
-                <span className="flex items-center gap-3">
-                  {item.icon}
-                  {item.label}
+                <span className="flex items-center gap-3.5">
+                  <span className={active ? "text-white" : "text-slate-500 group-hover:text-white"}>{item.icon}</span>
+                  <span className="tracking-wide">{item.label}</span>
                 </span>
-                <ChevronRight className={`h-5 w-5 transition-all duration-300 ${active ? "opacity-100 rotate-0" : "opacity-0 group-hover:opacity-55 -rotate-90"}`} />
+                {item.badge && pharmacyPendingCount > 0 && (
+                  <span className="rounded-full bg-rose-500 px-2 py-0.5 text-[10px] font-bold text-white leading-none shrink-0">
+                    {pharmacyPendingCount}
+                  </span>
+                )}
               </Link>
             );
           })}
         </nav>
 
-        <div className="border-t border-white/20 px-4 py-4">
+        {/* Bottom — user info + sign out */}
+        <div className="shrink-0 border-t border-white/10">
+          {/* User */}
+          <div className="flex items-center gap-3 px-5 py-3.5">
+            <div className={`grid h-8 w-8 shrink-0 place-items-center rounded-full ${theme.accent} text-xs font-bold text-white`}>
+              {(email || "U")[0].toUpperCase()}
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-[13px] font-semibold text-white capitalize">{displayName}</p>
+              <p className="truncate text-[11px] text-white/35">{email}</p>
+            </div>
+          </div>
           <button
-            onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-[13px] font-extrabold uppercase tracking-[0.08em] text-slate-700 transition-all duration-300 ease-out border border-white/30 bg-white/28 hover:bg-white/45 hover:border-white/50 hover:scale-105 active:scale-95"
+            onClick={() => { logout(); navigate("/login"); }}
+            className={`flex w-full items-center gap-3.5 pl-5 pr-4 py-4 text-[13px] font-medium text-white/30 ${theme.hoverBg} hover:text-white transition-colors`}
           >
-            <LogOut className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
-            Sign Out
+            <LogOut className="h-5 w-5 shrink-0 text-white/20" />
+            Sign out
           </button>
         </div>
       </aside>
 
-      {/* Main */}
-      <div className="flex min-w-0 flex-1 flex-col bg-gradient-to-br from-white/50 via-white/40 to-white/35 backdrop-blur-xl">
-        {/* Top nav */}
-        <header className="sticky top-0 z-20 flex h-20 items-center justify-between border-b border-white/40 bg-white/60 px-3 backdrop-blur-2xl sm:px-7 shadow-[0_12px_24px_-14px_rgba(40,114,161,0.25)] transition-all duration-300 ease-out">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="lg:hidden transition-all duration-300 hover:scale-110 active:scale-95"
-              onClick={() => setSidebarOpen(true)}
-            >
-              <Menu className="w-5 h-5 transition-transform duration-300" />
-            </Button>
-            <div className="min-w-0 transition-all duration-300">
-              <h2 className="font-display text-[29px] font-extrabold tracking-tight text-slate-900 transition-all duration-300">{headerTitle}</h2>
-              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-600 truncate max-w-[55vw] sm:max-w-none transition-all duration-300">{headerSubtitle}</p>
+      {/* ══════════════════════════════════════════════════════
+          MAIN CONTENT
+      ══════════════════════════════════════════════════════ */}
+      <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
+
+        {/* Top bar — pure white */}
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-4 sm:px-6">
+          <div className="flex items-center gap-3">
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden rounded-lg p-2 text-slate-500 hover:bg-slate-100 transition-colors">
+              <Menu className="h-5 w-5" />
+            </button>
+            {/* Page title */}
+            <div>
+              <h1 className="text-[15px] font-bold text-slate-900">{currentPage}</h1>
+              <p className="text-[11px] text-slate-400 capitalize hidden sm:block">{roleLabel} · Clinik HMS</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="hidden items-center gap-2 text-xs font-semibold text-slate-500 sm:flex transition-all duration-300">
-              <span className="uppercase tracking-[0.2em]">{roleLabel}</span>
-            </div>
-            <button className="relative grid h-9 w-9 place-items-center rounded-full border border-white/50 bg-white/30 text-[#2872a1] transition-all duration-300 ease-out backdrop-blur-md hover:bg-white/45 hover:scale-110 active:scale-95 shadow-[0_10px_20px_-12px_rgba(40,114,161,0.35)]" title="Notifications">
-              <Bell className="h-4 w-4 transition-transform duration-300" />
-              <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full animate-pulse" />
-            </button>
-            <div className="group relative">
-              <button className="grid h-11 w-11 place-items-center rounded-full bg-gradient-to-b from-[#5f9cc0] to-[#2872a1] text-sm font-bold text-white shadow-[0_14px_28px_-14px_rgba(40,114,161,0.9)] transition-all duration-300 ease-out hover:scale-110 active:scale-95">
-                {(email || "U")[0].toUpperCase()}
+
+          <div className="flex items-center gap-2">
+            {/* Bell */}
+            <div className="relative">
+              <button
+                onClick={() => setBellOpen((v) => !v)}
+                className="relative grid h-9 w-9 place-items-center rounded-lg text-slate-500 hover:bg-slate-100 transition-colors"
+              >
+                <Bell className="h-4.5 w-4.5" />
+                {hasAlerts && <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-rose-500 animate-pulse" />}
               </button>
-              <div className="absolute right-0 top-full mt-2 w-80 rounded-xl bg-white/95 backdrop-blur-md border border-white/50 shadow-[0_24px_55px_-16px_rgba(0,0,0,0.25)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-out">
-                <div className="p-4 border-b border-white/30">
-                  {receptionistProfile ? (
-                    <>
-                      <div className="mb-3 flex items-center gap-3 rounded-lg border border-white/50 bg-white/50 p-2.5">
-                        <div className="grid h-14 w-14 place-items-center rounded-xl bg-gradient-to-b from-[#5f9cc0] to-[#2872a1] text-lg font-bold text-white shadow-[0_12px_24px_-14px_rgba(40,114,161,0.8)]">
-                          {(email || "U")[0].toUpperCase()}
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-sm font-bold text-slate-900 truncate">{receptionistProfile.name}</p>
-                          <p className="text-xs text-slate-500 truncate">{email || "User"}</p>
-                          <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#2872a1]">Receptionist profile</p>
-                        </div>
+              {bellOpen && (
+                <div className="absolute right-0 top-full mt-2 w-72 rounded-xl border border-slate-200 bg-white shadow-2xl z-50 overflow-hidden">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Notifications</p>
+                    <button onClick={() => setBellOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                  <div className="divide-y divide-slate-50 max-h-64 overflow-y-auto">
+                    {notifications.map((n, i) => (
+                      <div key={i} className="flex items-start gap-3 px-4 py-3 hover:bg-slate-50 transition-colors">
+                        <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${n.type === "high" ? "bg-rose-500" : n.type === "medium" ? "bg-amber-400" : "bg-slate-300"}`} />
+                        <p className={`text-xs font-medium leading-relaxed ${n.type === "high" ? "text-rose-700" : n.type === "medium" ? "text-amber-700" : "text-slate-500"}`}>{n.text}</p>
                       </div>
-                      <p className="text-xs text-slate-600">Desk: <span className="font-semibold text-slate-700">{receptionistProfile.desk}</span></p>
-                      <p className="mt-1 text-xs text-slate-600">Shift: <span className="font-semibold text-slate-700">{receptionistProfile.shift}</span></p>
-                      <p className="mt-1 text-xs text-slate-600">Contact: <span className="font-semibold text-slate-700">{receptionistProfile.phone}</span></p>
-                    </>
-                  ) : (
-                    <>
-                      <div className="mb-3 flex items-center gap-3 rounded-lg border border-white/50 bg-white/50 p-2.5">
-                        <div className="grid h-14 w-14 place-items-center rounded-xl bg-gradient-to-b from-[#5f9cc0] to-[#2872a1] text-lg font-bold text-white shadow-[0_12px_24px_-14px_rgba(40,114,161,0.8)]">
-                          {(email || "U")[0].toUpperCase()}
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-sm font-bold text-slate-900 truncate">{email || "User"}</p>
-                          <p className="text-xs text-slate-500 capitalize">{role || "Staff"}</p>
-                        </div>
-                      </div>
-                    </>
-                  )}
+                    ))}
+                  </div>
                 </div>
-                <button 
-                  onClick={logout}
-                  className="w-full px-4 py-3 text-sm font-semibold text-red-600 hover:bg-red-50/50 transition-colors duration-300 flex items-center gap-2 justify-start rounded-b-xl"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Sign Out
-                </button>
+              )}
+            </div>
+
+            {/* Divider */}
+            <div className="h-6 w-px bg-slate-200 mx-1" />
+
+            {/* User chip */}
+            <div className="flex items-center gap-2.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 cursor-default">
+              <div className={`grid h-6 w-6 place-items-center rounded-full ${theme.accent} text-[11px] font-bold text-white shrink-0`}>
+                {(email || "U")[0].toUpperCase()}
+              </div>
+              <div className="hidden sm:block">
+                <p className="text-xs font-semibold text-slate-800 capitalize leading-none">{displayName}</p>
+                <p className="text-[10px] text-slate-400 mt-0.5">{roleLabel}</p>
               </div>
             </div>
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto p-3 sm:p-6 transition-all duration-300 ease-out animate-fade-in">
+        {/* Page content */}
+        <main className="flex-1 overflow-auto bg-slate-50 p-4 sm:p-6">
           {children}
         </main>
-      </div>
       </div>
     </div>
   );

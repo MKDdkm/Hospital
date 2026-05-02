@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
-import { doctors, patients, roomServiceRates } from "@/data/mockData";
+import { doctors, roomServiceRates } from "@/data/mockData";
+import { getPatients } from "@/lib/storage";
 import { CalendarDays, Phone, Stethoscope, UserRound } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 interface RoomOccupancyRow {
   roomType: string;
@@ -44,6 +44,7 @@ const getDateOffset = (days: number) => {
 };
 
 const buildBedSlots = (row: RoomOccupancyRow): BedSlot[] => {
+  const allPatients = getPatients();
   return Array.from({ length: row.totalBeds }, (_, index) => {
     const bedNo = index + 1;
     const occupiedLimit = row.occupiedBeds;
@@ -58,17 +59,17 @@ const buildBedSlots = (row: RoomOccupancyRow): BedSlot[] => {
       return { bedNo, bedCode: formatBedCode(row.roomType, bedNo), status };
     }
 
-    const profile = patients[(index + row.roomType.length) % patients.length];
+    const profile = allPatients[(index + row.roomType.length) % Math.max(allPatients.length, 1)];
     const doctor = doctors[(index + row.roomType.length) % doctors.length];
 
     return {
       bedNo,
       bedCode: formatBedCode(row.roomType, bedNo),
       status,
-      patientId: profile.id,
-      patientName: profile.name,
-      phone: profile.phone,
-      symptoms: profile.symptoms,
+      patientId: profile?.id,
+      patientName: profile?.name,
+      phone: profile?.phone,
+      symptoms: profile?.symptoms,
       doctorAssigned: doctor,
       admittedOn: getDateOffset(index % 4),
     };
@@ -88,7 +89,6 @@ const buildDefaultOccupancy = (): RoomOccupancyRow[] => {
 };
 
 const RoomOccupancy = () => {
-  const navigate = useNavigate();
   const [rows, setRows] = useState<RoomOccupancyRow[]>(() => {
     if (typeof window === "undefined") return buildDefaultOccupancy();
 
@@ -111,10 +111,6 @@ const RoomOccupancy = () => {
   };
 
   const [selectedBed, setSelectedBed] = useState<{ roomType: string; bed: BedSlot } | null>(null);
-
-  const openDoctorProfile = (doctorName: string) => {
-    navigate(`/receptionist/doctor/${encodeURIComponent(doctorName)}`);
-  };
 
   const summary = useMemo(() => {
     const totalBeds = rows.reduce((sum, row) => sum + row.totalBeds, 0);
@@ -240,11 +236,8 @@ const RoomOccupancy = () => {
                                   <span className="font-semibold">Doctor:</span>
                                   <button
                                     type="button"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      if (bed.doctorAssigned) openDoctorProfile(bed.doctorAssigned);
-                                    }}
-                                    className="pointer-events-auto ml-1 font-semibold text-[#2872a1] hover:underline"
+                                    onClick={(e) => { e.stopPropagation(); }}
+                                    className="pointer-events-auto ml-1 font-semibold text-slate-700"
                                   >
                                     {bed.doctorAssigned}
                                   </button>
@@ -278,13 +271,7 @@ const RoomOccupancy = () => {
                     <p className="inline-flex items-center gap-1 text-slate-700"><Phone className="h-4 w-4 text-blue-700" /> {selectedBed.bed.phone}</p>
                     <p className="inline-flex items-center gap-1 text-slate-700">
                       <Stethoscope className="h-4 w-4 text-blue-700" />
-                      <button
-                        type="button"
-                        onClick={() => selectedBed.bed.doctorAssigned && openDoctorProfile(selectedBed.bed.doctorAssigned)}
-                        className="font-semibold text-[#2872a1] hover:underline"
-                      >
-                        {selectedBed.bed.doctorAssigned}
-                      </button>
+                      <span className="font-semibold text-slate-700">{selectedBed.bed.doctorAssigned}</span>
                     </p>
                     <p className="inline-flex items-center gap-1 text-slate-700"><CalendarDays className="h-4 w-4 text-blue-700" /> Admitted: {selectedBed.bed.admittedOn}</p>
                     <p className="text-slate-600">Condition: {selectedBed.bed.symptoms}</p>
