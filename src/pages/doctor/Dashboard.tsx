@@ -71,6 +71,8 @@ const DoctorDashboard = () => {
     }
   });
 
+  const [followUpPrompt, setFollowUpPrompt] = useState<string | null>(null);
+
   const markCompleted = (appointmentId: string) => {
     setLocalAppointments((prev) => {
       const next = prev.map((a) => a.id === appointmentId ? { ...a, status: "Completed" as LocalAppointmentStatus } : a);
@@ -79,6 +81,8 @@ const DoctorDashboard = () => {
     });
     pushAuditLog("doctor.appointment.completed", `Appointment ${appointmentId} marked completed`);
     toast.success("Appointment marked as completed.");
+    setFollowUpPrompt(appointmentId);
+    setTimeout(() => setFollowUpPrompt(null), 8000);
   };
 
   const activeDoctor = useMemo(() => resolveDoctorFromEmail(email), [email]);
@@ -272,6 +276,18 @@ const DoctorDashboard = () => {
                         <CheckCircle2 className="h-3 w-3" /> Mark Done
                       </button>
                     </div>
+                    {followUpPrompt === appointment.id && (
+                      <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 mt-1">
+                        <span className="text-[11px] font-semibold text-amber-700">Schedule follow-up?</span>
+                        <button
+                          onClick={() => navigate(`/receptionist/appointment?patientId=${appointment.patientId}&doctor=${encodeURIComponent(appointment.doctor)}`)}
+                          className="rounded-full bg-amber-500 px-2.5 py-0.5 text-[10px] font-bold text-white hover:bg-amber-600 transition-colors"
+                        >
+                          Book Now
+                        </button>
+                        <button onClick={() => setFollowUpPrompt(null)} className="text-amber-400 hover:text-amber-600 text-[10px] ml-auto">Dismiss</button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

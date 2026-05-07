@@ -304,6 +304,25 @@ const WritePrescription = () => {
                   <p className="text-xs text-slate-600 mt-0.5">Chief complaint: {selectedPatient.symptoms}</p>
                 </div>
               )}
+              {/* Allergy warning */}
+              {selectedPatient && (() => {
+                try {
+                  const stored = JSON.parse(window.localStorage.getItem("medcore-patients") ?? "[]") as { id: string; allergies?: string }[];
+                  const match = stored.find((p) => p.id === selectedPatient.id);
+                  if (match?.allergies && match.allergies.trim()) {
+                    return (
+                      <div className="mt-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2.5 flex items-start gap-2">
+                        <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-xs font-bold text-amber-800">Known Allergies</p>
+                          <p className="text-xs text-amber-700 mt-0.5">{match.allergies}</p>
+                        </div>
+                      </div>
+                    );
+                  }
+                } catch { /* ignore */ }
+                return null;
+              })()}
             </div>
 
             {/* Medicines */}

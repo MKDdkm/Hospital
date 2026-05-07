@@ -6,6 +6,7 @@ import {
   Stethoscope, Search, FileText,
   UserCog, BarChart3, LogOut, Menu, Building2, BedDouble, Bell, Pill, X,
 } from "lucide-react";
+import { getPatients } from "@/lib/storage";
 
 interface NavItem {
   label: string;
@@ -59,6 +60,8 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [bellOpen, setBellOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const items = navItems[role ?? "receptionist"];
   const roleLabel = roleLabels[role ?? "receptionist"];
@@ -122,8 +125,15 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
 
   const hasAlerts = notifications.some((n) => n.type !== "info");
   const currentPage = items.find((i) => i.path === location.pathname)?.label ?? "Dashboard";
-
   const initials = (email ?? "U")[0].toUpperCase();
+
+  const searchResults = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q || q.length < 2) return [];
+    return getPatients().filter(
+      (p) => p.name.toLowerCase().includes(q) || p.id.toLowerCase().includes(q) || p.phone.includes(q)
+    ).slice(0, 6);
+  }, [searchQuery]);
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-100">
@@ -175,8 +185,8 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
           </p>
         </div>
 
-        {/* Nav items */}
-        <nav className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden px-3 pb-2 gap-0.5">
+        {/* Nav items — fill full height, no gap at bottom */}
+        <nav className="flex flex-col flex-1 overflow-hidden px-3">
           {items.map((item) => {
             const active = location.pathname === item.path;
             return (
@@ -184,18 +194,14 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
                 key={item.path}
                 to={item.path}
                 onClick={() => setSidebarOpen(false)}
-                className={`group flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 ${
+                className={`group flex flex-1 items-center justify-between gap-3 px-3 text-[13px] font-semibold transition-all duration-200 rounded-xl my-0.5 ${
                   active
                     ? "bg-blue-500 text-white shadow-[0_4px_14px_rgba(59,130,246,0.35)]"
                     : "text-slate-400 hover:bg-white/[0.06] hover:text-white"
                 }`}
               >
                 <span className="flex items-center gap-3">
-                  <span
-                    className={`transition-colors ${
-                      active ? "text-white" : "text-slate-500 group-hover:text-slate-300"
-                    }`}
-                  >
+                  <span className={`transition-colors ${active ? "text-white" : "text-slate-500 group-hover:text-slate-300"}`}>
                     {item.icon}
                   </span>
                   <span className="tracking-[0.01em]">{item.label}</span>
@@ -257,6 +263,46 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
                 {roleLabel} · Clinik HMS
               </p>
             </div>
+          </div>
+
+          {/* Global search */}
+          <div className="hidden md:flex flex-1 max-w-xs mx-6 relative">
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+              <input
+                type="text"
+                placeholder="Search patients..."
+                value={searchQuery}
+                onChange={(e) => { setSearchQuery(e.target.value); setSearchOpen(true); }}
+                onFocus={() => setSearchOpen(true)}
+                onBlur={() => setTimeout(() => setSearchOpen(false), 200)}
+                className="w-full h-9 pl-9 pr-3 rounded-lg border border-slate-200 bg-slate-50 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-blue-400 focus:bg-white transition-all"
+              />
+            </div>
+            {searchOpen && searchResults.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 rounded-xl border border-slate-200 bg-white shadow-xl z-50 overflow-hidden">
+                {searchResults.map((p) => (
+                  <button
+                    key={p.id}
+                    onMouseDown={() => {
+                      const path = role === "doctor" ? `/doctor/history` : `/receptionist/patient/${p.id}`;
+                      navigate(path);
+                      setSearchQuery("");
+                      setSearchOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors text-left border-b border-slate-50 last:border-0"
+                  >
+                    <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-[11px] font-bold text-blue-600 shrink-0">
+                      {p.name[0]}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold text-slate-800 truncate">{p.name}</p>
+                      <p className="text-[10px] text-slate-400">{p.id} · {p.age}y · {p.phone}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-2">

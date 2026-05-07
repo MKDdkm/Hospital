@@ -856,6 +856,49 @@ const Billing = () => {
                         >
                           Complete Discharge
                         </button>
+                        {dischargeReady && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const clinic = (() => { try { return JSON.parse(window.localStorage.getItem("medcore-clinic-settings") ?? "{}"); } catch { return {}; } })();
+                              const win = window.open("", "_blank", "width=700,height=600");
+                              if (!win) return;
+                              win.document.write(`<html><head><title>Discharge Summary</title>
+                              <style>body{font-family:Arial,sans-serif;padding:28px;color:#0f172a;font-size:13px}
+                              .header{display:flex;justify-content:space-between;border-bottom:2px solid #e2e8f0;padding-bottom:12px;margin-bottom:16px}
+                              .clinic-name{font-size:18px;font-weight:700;color:#1e5a80}
+                              .title{font-size:16px;font-weight:700;color:#0f172a;margin-bottom:12px}
+                              table{width:100%;border-collapse:collapse;margin-top:8px}
+                              th{text-align:left;border-bottom:2px solid #e2e8f0;padding:6px 8px;font-size:11px;color:#64748b;text-transform:uppercase}
+                              td{padding:8px;border-bottom:1px solid #f1f5f9}
+                              .total{font-size:15px;font-weight:700;color:#1d4ed8;margin-top:12px}
+                              .footer{margin-top:20px;font-size:10px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:10px;text-align:center}
+                              .badge{display:inline-block;background:#dcfce7;color:#166534;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600}
+                              </style></head><body>
+                              <div class="header">
+                                <div><div class="clinic-name">${clinic.name ?? "Clinik HMS"}</div><div style="font-size:11px;color:#64748b">${clinic.phone ?? ""}</div></div>
+                                <div style="text-align:right;font-size:11px;color:#64748b"><div>Discharge Summary</div><div>${new Date().toLocaleDateString()}</div></div>
+                              </div>
+                              <div class="title">Patient Discharge Summary</div>
+                              <table><tbody>
+                                <tr><td><strong>Patient</strong></td><td>${bill.patientName}</td><td><strong>Bill ID</strong></td><td>${bill.id}</td></tr>
+                                <tr><td><strong>Admission</strong></td><td>${draft.admissionDate}</td><td><strong>Discharge</strong></td><td>${draft.dischargeDate}</td></tr>
+                                <tr><td><strong>Room Type</strong></td><td>${draft.roomType}</td><td><strong>Days</strong></td><td>${draft.numberOfDays}</td></tr>
+                              </tbody></table>
+                              <div style="margin-top:16px"><strong>Charges Breakdown</strong></div>
+                              <table><thead><tr><th>Description</th><th style="text-align:right">Amount</th></tr></thead><tbody>
+                                ${lineItems.map((i) => `<tr><td>${i.description}</td><td style="text-align:right">₹${i.amount.toLocaleString()}</td></tr>`).join("")}
+                              </tbody></table>
+                              <div class="total">Total: ₹${grandTotal.toLocaleString()} &nbsp; <span class="badge">Cleared</span></div>
+                              <div class="footer">${clinic.name ?? "Clinik HMS"} · Thank you for choosing us for your healthcare.</div>
+                              <script>window.onload=()=>{window.print()}</script></body></html>`);
+                              win.document.close();
+                            }}
+                            className="mt-1 h-8 w-full rounded-lg border border-emerald-300 bg-white px-3 text-xs font-semibold text-emerald-700 hover:bg-emerald-50 inline-flex items-center justify-center gap-1.5"
+                          >
+                            🖨️ Print Discharge Summary
+                          </button>
+                        )}
                       </div>
                     )}
                     <button
