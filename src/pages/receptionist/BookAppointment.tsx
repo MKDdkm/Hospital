@@ -198,11 +198,11 @@ const BookAppointment = () => {
       if (!win) return;
       win.document.write(`<html><head><title>Appointment Slip</title>
       <style>body{font-family:Arial,sans-serif;padding:24px;color:#0f172a;}
-      .title{font-size:18px;font-weight:700;color:#2872a1;margin-bottom:4px;}
+      .title{font-size:18px;font-weight:700;color:#2563eb;margin-bottom:4px;}
       .row{display:flex;gap:8px;margin-bottom:6px;font-size:13px;}
       .label{color:#64748b;min-width:120px;}.value{font-weight:600;}
       .footer{margin-top:14px;font-size:11px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:8px;}
-      .token{font-size:32px;font-weight:800;color:#2872a1;text-align:center;margin:12px 0;}
+      .token{font-size:32px;font-weight:800;color:#2563eb;text-align:center;margin:12px 0;}
       </style></head><body>
       <div class="title">MedCore HMS — Appointment Slip</div>
       <div class="token">Token #${token}</div>
@@ -242,11 +242,11 @@ const BookAppointment = () => {
     <DashboardLayout>
       <div className="mx-auto max-w-[1100px] space-y-5 animate-fade-in-up">
         <div className="flex items-center justify-between">
-          <h1 className="dashboard-title text-[#2872a1]">Book Appointment</h1>
+          <h1 className="dashboard-title text-[#2563eb]">Book Appointment</h1>
           <button
             type="button"
             onClick={() => navigate("/receptionist")}
-            className="inline-flex items-center gap-1.5 rounded-full border border-white/50 bg-white/40 px-3 py-1.5 text-xs font-semibold text-[#2872a1] hover:bg-white/60 transition-all"
+            className="inline-flex items-center gap-1.5 rounded-full border border-white/50 bg-white/40 px-3 py-1.5 text-xs font-semibold text-[#2563eb] hover:bg-white/60 transition-all"
           >
             <RefreshCcw className="h-3.5 w-3.5" /> Back to Queue
           </button>
@@ -255,7 +255,7 @@ const BookAppointment = () => {
         <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1.4fr_1fr]">
           {/* ── Booking form ── */}
           <div className="rounded-2xl border border-white/60 bg-white/80 backdrop-blur-xl p-5 shadow-[0_18px_45px_-20px_rgba(40,114,161,0.25)]">
-            <p className="mb-4 text-xs font-bold uppercase tracking-[0.12em] text-[#2872a1]">
+            <p className="mb-4 text-xs font-bold uppercase tracking-[0.12em] text-[#2563eb]">
               <CalendarPlus className="inline h-3.5 w-3.5 mr-1" /> Appointment Details
             </p>
 
@@ -378,12 +378,12 @@ const BookAppointment = () => {
                           onClick={() => setForm({ ...form, time: slot })}
                           className={`rounded-lg border px-1.5 py-2 text-[11px] font-semibold transition-all ${
                             isSelected
-                              ? "border-[#2872a1] bg-[#2872a1] text-white shadow-md"
+                              ? "border-[#2563eb] bg-[#2563eb] text-white shadow-md"
                               : isFull
                                 ? "border-rose-200 bg-rose-50 text-rose-400 cursor-not-allowed"
                                 : used === 1
                                   ? "border-amber-200 bg-amber-50 text-amber-700 hover:border-amber-400"
-                                  : "border-slate-200 bg-white text-slate-700 hover:border-[#2872a1] hover:bg-blue-50"
+                                  : "border-slate-200 bg-white text-slate-700 hover:border-[#2563eb] hover:bg-blue-50"
                           }`}
                         >
                           {toDisplayTime(slot)}
@@ -460,7 +460,7 @@ const BookAppointment = () => {
               <Button
                 type="submit"
                 disabled={slotFull || Boolean(samePatientConflict)}
-                className="w-full sm:w-auto px-8 bg-gradient-to-r from-[#2872a1] to-[#1a4d73] inline-flex items-center gap-2"
+                className="w-full sm:w-auto px-8 bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] inline-flex items-center gap-2"
               >
                 <CalendarCheck className="h-4 w-4" /> Confirm Booking
               </Button>
@@ -472,7 +472,7 @@ const BookAppointment = () => {
             {/* Doctor availability for selected date */}
             {form.date && (
               <div className="rounded-2xl border border-white/60 bg-white/80 backdrop-blur-xl p-4 shadow-[0_18px_45px_-20px_rgba(40,114,161,0.2)]">
-                <p className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[#2872a1]">
+                <p className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[#2563eb]">
                   <Users className="inline h-3.5 w-3.5 mr-1" /> Doctor Load — {form.date}
                 </p>
                 <div className="space-y-2.5">
@@ -482,7 +482,7 @@ const BookAppointment = () => {
                         <button
                           type="button"
                           onClick={() => setForm({ ...form, doctor: doc })}
-                          className={`hover:text-[#2872a1] transition-colors text-left ${form.doctor === doc ? "text-[#2872a1]" : ""}`}
+                          className={`hover:text-[#2563eb] transition-colors text-left ${form.doctor === doc ? "text-[#2563eb]" : ""}`}
                         >
                           {doc}
                         </button>
@@ -505,7 +505,7 @@ const BookAppointment = () => {
             {/* Today's bookings for selected doctor */}
             {form.doctor && form.date && slotAppointments.length > 0 && (
               <div className="rounded-2xl border border-white/60 bg-white/80 backdrop-blur-xl p-4 shadow-[0_18px_45px_-20px_rgba(40,114,161,0.2)]">
-                <p className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[#2872a1]">
+                <p className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[#2563eb]">
                   <Clock3 className="inline h-3.5 w-3.5 mr-1" /> Existing Bookings
                 </p>
                 <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
@@ -532,12 +532,12 @@ const BookAppointment = () => {
             )}
 
             {/* Quick register link */}
-            <div className="rounded-2xl border border-dashed border-[#2872a1]/30 bg-[#2872a1]/5 p-4 text-center">
+            <div className="rounded-2xl border border-dashed border-[#2563eb]/30 bg-[#2563eb]/5 p-4 text-center">
               <p className="text-xs text-slate-600">Patient not in the list?</p>
               <button
                 type="button"
                 onClick={() => navigate("/receptionist/register")}
-                className="mt-2 text-xs font-semibold text-[#2872a1] hover:underline"
+                className="mt-2 text-xs font-semibold text-[#2563eb] hover:underline"
               >
                 Register new patient →
               </button>

@@ -94,7 +94,7 @@ const PatientProfile = () => {
           {/* Header */}
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/50 pb-4">
             <div>
-              <h1 className="dashboard-title text-[#2872a1]">Patient Profile</h1>
+              <h1 className="dashboard-title text-[#2563eb]">Patient Profile</h1>
               <p className="mt-0.5 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">ID: {patientId}</p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -102,7 +102,7 @@ const PatientProfile = () => {
                 <>
                   <button
                     onClick={() => navigate(`/receptionist/appointment?patientId=${patientId}`)}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#2872a1] to-[#1a4d73] px-3.5 py-2 text-xs font-semibold text-white shadow-md hover:shadow-lg transition-all"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] px-3.5 py-2 text-xs font-semibold text-white shadow-md hover:shadow-lg transition-all"
                   >
                     <CalendarPlus className="h-3.5 w-3.5" /> Book Appointment
                   </button>
@@ -116,7 +116,7 @@ const PatientProfile = () => {
               )}
               <button
                 onClick={() => navigate(-1)}
-                className="inline-flex items-center gap-1 rounded-full border border-white/50 bg-white/40 px-3.5 py-2 text-xs font-semibold text-[#2872a1] hover:bg-white/60 transition-all"
+                className="inline-flex items-center gap-1 rounded-full border border-white/50 bg-white/40 px-3.5 py-2 text-xs font-semibold text-[#2563eb] hover:bg-white/60 transition-all"
               >
                 <ArrowLeft className="h-3.5 w-3.5" /> Back
               </button>
@@ -132,7 +132,7 @@ const PatientProfile = () => {
               {/* Quick stats */}
               <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {[
-                  { label: "Total Visits", value: appointmentHistory.length, icon: <Activity className="h-4 w-4" />, color: "text-[#2872a1]" },
+                  { label: "Total Visits", value: appointmentHistory.length, icon: <Activity className="h-4 w-4" />, color: "text-[#2563eb]" },
                   { label: "Prescriptions", value: allPrescriptions.length, icon: <Pill className="h-4 w-4" />, color: "text-indigo-700" },
                   { label: "Pending Bills", value: pendingBills.length, icon: <ReceiptText className="h-4 w-4" />, color: pendingBills.length > 0 ? "text-amber-700" : "text-emerald-700" },
                   { label: "Total Billed", value: `₹${totalBilled.toLocaleString()}`, icon: <HeartPulse className="h-4 w-4" />, color: "text-slate-700" },
@@ -151,10 +151,10 @@ const PatientProfile = () => {
                 <section className="space-y-4">
                   {/* Basic details */}
                   <article className="rounded-xl border border-white/50 bg-white/45 p-4 backdrop-blur-md">
-                    <h2 className="text-xs font-bold uppercase tracking-[0.14em] text-[#2872a1]">Basic Details</h2>
+                    <h2 className="text-xs font-bold uppercase tracking-[0.14em] text-[#2563eb]">Basic Details</h2>
                     <div className="mt-3 flex items-center gap-4 rounded-xl border border-white/40 bg-white/50 p-3">
-                      <div className="grid h-20 w-20 shrink-0 place-items-center rounded-xl border border-white/60 bg-gradient-to-b from-[#5f9cc0]/20 to-[#2872a1]/10 shadow-md">
-                        <UserCircle2 className="h-12 w-12 text-[#2872a1]" />
+                      <div className="grid h-20 w-20 shrink-0 place-items-center rounded-xl border border-white/60 bg-gradient-to-b from-[#60a5fa]/20 to-[#2563eb]/10 shadow-md">
+                        <UserCircle2 className="h-12 w-12 text-[#2563eb]" />
                       </div>
                       <div className="min-w-0">
                         <p className="text-base font-bold text-slate-900">{patient.name}</p>
@@ -169,8 +169,8 @@ const PatientProfile = () => {
 
                     <div className="mt-3 grid grid-cols-2 gap-2.5">
                       {[
-                        { label: "Phone", value: patient.phone, icon: <Phone className="h-3.5 w-3.5 text-[#2872a1]" /> },
-                        { label: "Registered", value: patient.registeredAt, icon: <CalendarDays className="h-3.5 w-3.5 text-[#2872a1]" /> },
+                        { label: "Phone", value: patient.phone, icon: <Phone className="h-3.5 w-3.5 text-[#2563eb]" /> },
+                        { label: "Registered", value: patient.registeredAt, icon: <CalendarDays className="h-3.5 w-3.5 text-[#2563eb]" /> },
                         { label: "Age", value: `${patient.age} years` },
                         { label: "Gender", value: patient.gender },
                       ].map((item) => (
@@ -190,7 +190,7 @@ const PatientProfile = () => {
                         {!editingSymptoms ? (
                           <button
                             onClick={startEditSymptoms}
-                            className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#2872a1] hover:underline"
+                            className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#2563eb] hover:underline"
                           >
                             <Edit3 className="h-3 w-3" /> Edit
                           </button>
@@ -210,7 +210,7 @@ const PatientProfile = () => {
                           autoFocus
                           value={symptomsValue}
                           onChange={(e) => setSymptomsValue(e.target.value)}
-                          className="mt-1 w-full rounded-md border border-[#2872a1]/30 bg-white px-2 py-1 text-sm text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#2872a1]"
+                          className="mt-1 w-full rounded-md border border-[#2563eb]/30 bg-white px-2 py-1 text-sm text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#2563eb]"
                         />
                       ) : (
                         <p className="text-sm font-semibold text-slate-900">{patient.symptoms}</p>
@@ -221,7 +221,7 @@ const PatientProfile = () => {
                   {/* Appointment timeline */}
                   <article className="rounded-xl border border-white/50 bg-white/45 p-4 backdrop-blur-md">
                     <div className="flex items-center justify-between">
-                      <h2 className="text-xs font-bold uppercase tracking-[0.14em] text-[#2872a1]">
+                      <h2 className="text-xs font-bold uppercase tracking-[0.14em] text-[#2563eb]">
                         <Clock3 className="inline h-3.5 w-3.5 mr-1" /> Appointment History
                       </h2>
                       <span className="text-xs font-semibold text-slate-500">{appointmentHistory.length} visits</span>
@@ -251,7 +251,7 @@ const PatientProfile = () => {
                   {/* Billing */}
                   <article className="rounded-xl border border-white/50 bg-white/45 p-4 backdrop-blur-md">
                     <div className="flex items-center justify-between">
-                      <h2 className="text-xs font-bold uppercase tracking-[0.14em] text-[#2872a1]">
+                      <h2 className="text-xs font-bold uppercase tracking-[0.14em] text-[#2563eb]">
                         <ReceiptText className="inline h-3.5 w-3.5 mr-1" /> Billing
                       </h2>
                       <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold ${pendingBills.length > 0 ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"}`}>
@@ -278,7 +278,7 @@ const PatientProfile = () => {
                   {/* Prescriptions */}
                   <article className="rounded-xl border border-white/50 bg-white/45 p-4 backdrop-blur-md">
                     <div className="flex items-center justify-between">
-                      <h2 className="text-xs font-bold uppercase tracking-[0.14em] text-[#2872a1]">
+                      <h2 className="text-xs font-bold uppercase tracking-[0.14em] text-[#2563eb]">
                         <Stethoscope className="inline h-3.5 w-3.5 mr-1" /> Prescriptions
                       </h2>
                       <span className="text-xs font-semibold text-slate-500">{allPrescriptions.length} total</span>
@@ -315,7 +315,7 @@ const PatientProfile = () => {
                               ) : (
                                 <button
                                   onClick={() => handleSendToPharmacy(rx.id)}
-                                  className="inline-flex items-center gap-1 rounded-full border border-[#2872a1]/30 bg-[#2872a1]/5 px-2.5 py-1 text-[10px] font-semibold text-[#2872a1] hover:bg-[#2872a1]/10 transition-all"
+                                  className="inline-flex items-center gap-1 rounded-full border border-[#2563eb]/30 bg-[#2563eb]/5 px-2.5 py-1 text-[10px] font-semibold text-[#2563eb] hover:bg-[#2563eb]/10 transition-all"
                                 >
                                   <Send className="h-2.5 w-2.5" /> Send to Pharmacy
                                 </button>

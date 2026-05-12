@@ -201,7 +201,7 @@ const AdminDashboard = () => {
                       <span className={entry.load >= 3 ? "text-amber-600" : "text-emerald-600"}>{entry.load} appointments</span>
                     </div>
                     <div className="h-2 rounded-full bg-slate-100">
-                      <div className={`h-2 rounded-full transition-all ${entry.loadPct >= 80 ? "bg-amber-400" : "bg-[#2872a1]"}`} style={{ width: `${entry.loadPct}%` }} />
+                      <div className={`h-2 rounded-full transition-all ${entry.loadPct >= 80 ? "bg-amber-400" : "bg-[#2563eb]"}`} style={{ width: `${entry.loadPct}%` }} />
                     </div>
                   </div>
                 ))}

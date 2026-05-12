@@ -146,7 +146,7 @@ const ClinicSettings = () => {
           <div className="rounded-xl border border-slate-100 bg-slate-50 px-5 py-4">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-lg font-bold text-[#1e5a80]">{form.name || "Clinic Name"}</p>
+                <p className="text-lg font-bold text-[#1d4ed8]">{form.name || "Clinic Name"}</p>
                 <p className="text-xs text-slate-500">{form.tagline}</p>
                 <p className="text-xs text-slate-500 mt-1">{form.address}{form.city ? `, ${form.city}` : ""}{form.pincode ? ` — ${form.pincode}` : ""}</p>
                 <p className="text-xs text-slate-500">{form.phone}{form.email ? ` · ${form.email}` : ""}</p>
@@ -164,7 +164,7 @@ const ClinicSettings = () => {
         <div className="space-y-5">
           {sections.map((section) => (
             <div key={section.title} className="rounded-2xl border border-white/60 bg-white/80 backdrop-blur-xl p-5 shadow-sm">
-              <p className="mb-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#2872a1]">
+              <p className="mb-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#2563eb]">
                 {section.icon} {section.title}
               </p>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -190,7 +190,7 @@ const ClinicSettings = () => {
         <div className="flex items-center gap-3 pb-4">
           <Button
             onClick={handleSave}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#2872a1] to-[#1a4d73] px-8"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] px-8"
           >
             {saved ? <CheckCircle2 className="h-4 w-4" /> : <Save className="h-4 w-4" />}
             {saved ? "Saved!" : "Save Settings"}

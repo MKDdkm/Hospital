@@ -64,7 +64,7 @@ const SearchPatient = () => {
                   <tbody>
                     {results.map((p) => (
                       <tr key={p.id} className="border-b border-slate-50 last:border-0 hover:bg-blue-50/20 transition-colors">
-                        <td className="px-4 py-3 font-mono text-xs font-semibold text-[#2872a1]">{p.id}</td>
+                        <td className="px-4 py-3 font-mono text-xs font-semibold text-[#2563eb]">{p.id}</td>
                         <td className="px-4 py-3 font-semibold text-slate-800">{p.name}</td>
                         <td className="px-4 py-3 text-slate-600">{p.age}y</td>
                         <td className="px-4 py-3 text-slate-600">{p.gender}</td>
@@ -82,7 +82,7 @@ const SearchPatient = () => {
                             <Button
                               size="sm"
                               onClick={() => navigate(`/doctor/write-rx?patientId=${p.id}&patientName=${encodeURIComponent(p.name)}`)}
-                              className="inline-flex items-center gap-1 text-xs bg-[#2872a1] hover:bg-[#1a4d73]"
+                              className="inline-flex items-center gap-1 text-xs bg-[#2563eb] hover:bg-[#1d4ed8]"
                             >
                               <FilePlus className="w-3.5 h-3.5" /> Write Rx
                             </Button>

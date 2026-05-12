@@ -161,17 +161,17 @@ const Reports = () => {
             <div className="flex flex-wrap items-center gap-2">
               {/* Date range */}
               <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)}
-                className="h-8 rounded-lg border border-slate-200 bg-white px-2 text-xs text-slate-700 focus:outline-none focus:border-[#2872a1]" />
+                className="h-8 rounded-lg border border-slate-200 bg-white px-2 text-xs text-slate-700 focus:outline-none focus:border-[#2563eb]" />
               <span className="text-xs text-slate-400">to</span>
               <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)}
-                className="h-8 rounded-lg border border-slate-200 bg-white px-2 text-xs text-slate-700 focus:outline-none focus:border-[#2872a1]" />
+                className="h-8 rounded-lg border border-slate-200 bg-white px-2 text-xs text-slate-700 focus:outline-none focus:border-[#2563eb]" />
               {/* Type filter */}
               <select value={logFilter} onChange={(e) => setLogFilter(e.target.value)}
                 className="h-8 rounded-lg border border-slate-200 bg-white px-2 text-xs text-slate-700 focus:outline-none">
                 {logTypes.map((t) => <option key={t} value={t}>{t === "All" ? "All types" : t}</option>)}
               </select>
               <button onClick={exportLogs}
-                className="inline-flex items-center gap-1 rounded-full border border-[#2872a1]/30 bg-[#2872a1]/5 px-3 py-1.5 text-xs font-semibold text-[#2872a1] hover:bg-[#2872a1]/10 transition-colors">
+                className="inline-flex items-center gap-1 rounded-full border border-[#2563eb]/30 bg-[#2563eb]/5 px-3 py-1.5 text-xs font-semibold text-[#2563eb] hover:bg-[#2563eb]/10 transition-colors">
                 <Download className="h-3 w-3" /> Export CSV
               </button>
             </div>

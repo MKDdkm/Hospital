@@ -88,11 +88,11 @@ const PatientList = () => {
 
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h1 className="dashboard-title text-[#2872a1]">Patient Records</h1>
+          <h1 className="dashboard-title text-[#2563eb]">Patient Records</h1>
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => navigate("/receptionist/register")}
-              className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#2872a1] to-[#1a4d73] px-3.5 py-2 text-xs font-semibold text-white shadow-md hover:shadow-lg transition-all"
+              className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] px-3.5 py-2 text-xs font-semibold text-white shadow-md hover:shadow-lg transition-all"
             >
               <UserPlus className="h-3.5 w-3.5" /> Register Patient
             </button>
@@ -108,7 +108,7 @@ const PatientList = () => {
         {/* Stats bar */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
-            { label: "Total Patients", value: stats.total, icon: <Users className="h-4 w-4" />, color: "text-[#2872a1]", bg: "bg-blue-50", active: segmentFilter === "All", seg: "All" as Segment },
+            { label: "Total Patients", value: stats.total, icon: <Users className="h-4 w-4" />, color: "text-[#2563eb]", bg: "bg-blue-50", active: segmentFilter === "All", seg: "All" as Segment },
             { label: "New", value: stats.newCount, icon: <UserPlus className="h-4 w-4" />, color: "text-slate-700", bg: "bg-slate-50", active: segmentFilter === "New", seg: "New" as Segment },
             { label: "Returning", value: stats.returning, icon: <UserCheck className="h-4 w-4" />, color: "text-emerald-700", bg: "bg-emerald-50", active: segmentFilter === "Returning", seg: "Returning" as Segment },
             { label: "Frequent", value: stats.frequent, icon: <UserX className="h-4 w-4" />, color: "text-blue-700", bg: "bg-blue-50", active: segmentFilter === "Frequent", seg: "Frequent" as Segment },
@@ -119,7 +119,7 @@ const PatientList = () => {
               onClick={() => setSegmentFilter(s.seg)}
               className={`rounded-2xl border p-4 text-left transition-all hover:-translate-y-0.5 ${
                 s.active
-                  ? "border-[#2872a1]/30 bg-[#2872a1]/5 shadow-md"
+                  ? "border-[#2563eb]/30 bg-[#2563eb]/5 shadow-md"
                   : "border-white/60 bg-white/80 hover:shadow-sm"
               }`}
             >
@@ -151,7 +151,7 @@ const PatientList = () => {
                 onClick={() => setGenderFilter(g)}
                 className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${
                   genderFilter === g
-                    ? "border-[#2872a1] bg-[#2872a1] text-white"
+                    ? "border-[#2563eb] bg-[#2563eb] text-white"
                     : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
                 }`}
               >
@@ -163,7 +163,7 @@ const PatientList = () => {
             <button
               type="button"
               onClick={() => { setSearch(""); setSegmentFilter("All"); setGenderFilter("All"); }}
-              className="text-xs font-semibold text-[#2872a1] hover:underline"
+              className="text-xs font-semibold text-[#2563eb] hover:underline"
             >
               Clear filters
             </button>
@@ -204,7 +204,7 @@ const PatientList = () => {
                       className="border-b last:border-0 hover:bg-blue-50/30 transition-colors cursor-pointer"
                       onClick={() => navigate(`/receptionist/patient/${encodeURIComponent(p.id)}`)}
                     >
-                      <td className="px-4 py-3 font-medium text-[#2872a1] text-sm">{p.id}</td>
+                      <td className="px-4 py-3 font-medium text-[#2563eb] text-sm">{p.id}</td>
                       <td className="px-4 py-3 font-semibold text-slate-800 text-sm">{p.name}</td>
                       <td className="px-4 py-3">
                         <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${segmentClass[seg]}`}>{seg}</span>

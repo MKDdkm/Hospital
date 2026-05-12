@@ -100,7 +100,7 @@ const UserManagement = () => {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Add staff form */}
           <div className="rounded-2xl border border-white/60 bg-white/80 backdrop-blur-xl p-5 shadow-sm">
-            <h3 className="mb-4 flex items-center gap-2 font-semibold text-[#2872a1]">
+            <h3 className="mb-4 flex items-center gap-2 font-semibold text-[#2563eb]">
               <UserPlus className="w-4 h-4" /> Add Staff Member
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -162,7 +162,7 @@ const UserManagement = () => {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search name, email, role..."
-                  className="h-8 w-full rounded-lg border border-slate-200 bg-white pl-8 pr-3 text-xs text-slate-700 focus:border-[#2872a1] focus:outline-none"
+                  className="h-8 w-full rounded-lg border border-slate-200 bg-white pl-8 pr-3 text-xs text-slate-700 focus:border-[#2563eb] focus:outline-none"
                 />
               </div>
             </div>

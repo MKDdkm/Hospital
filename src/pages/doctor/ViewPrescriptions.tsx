@@ -116,19 +116,19 @@ const ViewPrescriptions = () => {
             placeholder="Filter by patient name or ID..."
             value={patientFilter}
             onChange={(e) => setPatientFilter(e.target.value)}
-            className="h-9 w-full sm:w-56 rounded-lg border border-slate-200 bg-white/80 px-3 text-xs text-slate-700 focus:outline-none focus:border-[#2872a1]"
+            className="h-9 w-full sm:w-56 rounded-lg border border-slate-200 bg-white/80 px-3 text-xs text-slate-700 focus:outline-none focus:border-[#2563eb]"
           />
           <div className="flex items-center gap-2">
             <span className="text-xs text-slate-500">From</span>
             <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)}
-              className="h-9 rounded-lg border border-slate-200 bg-white/80 px-2 text-xs text-slate-700 focus:outline-none focus:border-[#2872a1]" />
+              className="h-9 rounded-lg border border-slate-200 bg-white/80 px-2 text-xs text-slate-700 focus:outline-none focus:border-[#2563eb]" />
             <span className="text-xs text-slate-400">to</span>
             <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)}
-              className="h-9 rounded-lg border border-slate-200 bg-white/80 px-2 text-xs text-slate-700 focus:outline-none focus:border-[#2872a1]" />
+              className="h-9 rounded-lg border border-slate-200 bg-white/80 px-2 text-xs text-slate-700 focus:outline-none focus:border-[#2563eb]" />
           </div>
           {(dateFrom || dateTo || patientFilter) && (
             <button onClick={() => { setDateFrom(""); setDateTo(""); setPatientFilter(""); }}
-              className="text-xs text-[#2872a1] hover:underline">Clear filters</button>
+              className="text-xs text-[#2563eb] hover:underline">Clear filters</button>
           )}
         </div>
 

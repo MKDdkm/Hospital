@@ -324,9 +324,9 @@ const Billing = () => {
           <style>
             body{font-family:Arial,sans-serif;color:#0f172a;padding:28px;font-size:13px}
             .clinic-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #cbd5e1;padding-bottom:12px;margin-bottom:16px}
-            .clinic-name{font-size:20px;font-weight:700;color:#1e5a80}
+            .clinic-name{font-size:20px;font-weight:700;color:#1d4ed8}
             .clinic-sub{font-size:11px;color:#64748b;margin-top:2px}
-            .invoice-title{font-size:16px;font-weight:700;color:#1e5a80;margin-bottom:4px}
+            .invoice-title{font-size:16px;font-weight:700;color:#1d4ed8;margin-bottom:4px}
             table{width:100%;border-collapse:collapse;margin-top:12px}
             th{text-align:left;border-bottom:2px solid #cbd5e1;padding:8px 0;font-size:11px;color:#64748b;text-transform:uppercase}
             .summary{margin-top:16px;border-top:1px solid #e2e8f0;padding-top:12px}
@@ -866,7 +866,7 @@ const Billing = () => {
                               win.document.write(`<html><head><title>Discharge Summary</title>
                               <style>body{font-family:Arial,sans-serif;padding:28px;color:#0f172a;font-size:13px}
                               .header{display:flex;justify-content:space-between;border-bottom:2px solid #e2e8f0;padding-bottom:12px;margin-bottom:16px}
-                              .clinic-name{font-size:18px;font-weight:700;color:#1e5a80}
+                              .clinic-name{font-size:18px;font-weight:700;color:#1d4ed8}
                               .title{font-size:16px;font-weight:700;color:#0f172a;margin-bottom:12px}
                               table{width:100%;border-collapse:collapse;margin-top:8px}
                               th{text-align:left;border-bottom:2px solid #e2e8f0;padding:6px 8px;font-size:11px;color:#64748b;text-transform:uppercase}

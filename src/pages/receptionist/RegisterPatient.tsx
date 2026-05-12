@@ -32,8 +32,8 @@ const printPatientCard = (patient: RegisteredResult) => {
     <html><head><title>Patient Card</title>
     <style>
       body{font-family:Arial,sans-serif;padding:24px;color:#0f172a;}
-      .card{border:2px solid #2872a1;border-radius:12px;padding:20px;max-width:400px;}
-      .title{font-size:18px;font-weight:700;color:#2872a1;margin-bottom:4px;}
+      .card{border:2px solid #2563eb;border-radius:12px;padding:20px;max-width:400px;}
+      .title{font-size:18px;font-weight:700;color:#2563eb;margin-bottom:4px;}
       .id{font-size:13px;color:#64748b;margin-bottom:12px;}
       .row{display:flex;gap:8px;margin-bottom:6px;font-size:13px;}
       .label{color:#64748b;min-width:110px;}
@@ -162,7 +162,7 @@ const RegisterPatient = () => {
     return (
       <DashboardLayout>
         <div className="mx-auto max-w-2xl space-y-5 animate-fade-in-up">
-          <h1 className="dashboard-title text-[#2872a1]">Register New Patient</h1>
+          <h1 className="dashboard-title text-[#2563eb]">Register New Patient</h1>
 
           {/* Success card */}
           <div className="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-cyan-50 p-6 shadow-[0_18px_45px_-20px_rgba(16,185,129,0.3)]">
@@ -195,7 +195,7 @@ const RegisterPatient = () => {
             <div className="mt-5 flex flex-wrap gap-3">
               <Button
                 onClick={() => navigate(`/receptionist/appointment?patientId=${lastRegistered.id}`)}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-[#2872a1] to-[#1a4d73]"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-[#2563eb] to-[#1d4ed8]"
               >
                 <CalendarPlus className="h-4 w-4" /> Book Appointment Now
               </Button>
@@ -227,8 +227,8 @@ const RegisterPatient = () => {
     <DashboardLayout>
       <div className="mx-auto max-w-2xl space-y-5 animate-fade-in-up">
         <div className="flex items-center justify-between">
-          <h1 className="dashboard-title text-[#2872a1]">Register New Patient</h1>
-          <span className="rounded-full border border-[#2872a1]/20 bg-[#2872a1]/5 px-3 py-1 text-xs font-semibold text-[#2872a1]">
+          <h1 className="dashboard-title text-[#2563eb]">Register New Patient</h1>
+          <span className="rounded-full border border-[#2563eb]/20 bg-[#2563eb]/5 px-3 py-1 text-xs font-semibold text-[#2563eb]">
             {getPatients().length} patients on record
           </span>
         </div>
@@ -238,7 +238,7 @@ const RegisterPatient = () => {
 
             {/* Personal info */}
             <div>
-              <p className="mb-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#2872a1]">
+              <p className="mb-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#2563eb]">
                 <User className="h-3.5 w-3.5" /> Personal Information
               </p>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -308,7 +308,7 @@ const RegisterPatient = () => {
 
             {/* Contact */}
             <div>
-              <p className="mb-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#2872a1]">
+              <p className="mb-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#2563eb]">
                 <Phone className="h-3.5 w-3.5" /> Contact Details
               </p>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -346,7 +346,7 @@ const RegisterPatient = () => {
 
             {/* Medical */}
             <div>
-              <p className="mb-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#2872a1]">
+              <p className="mb-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#2563eb]">
                 <HeartPulse className="h-3.5 w-3.5" /> Medical Information
               </p>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -394,7 +394,7 @@ const RegisterPatient = () => {
             <div className="flex flex-wrap gap-3 pt-1">
               <Button
                 type="submit"
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-[#2872a1] to-[#1a4d73] px-8"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] px-8"
               >
                 <UserPlus className="h-4 w-4" /> Register Patient
               </Button>

@@ -332,7 +332,7 @@ const PharmacyDashboard = () => {
     ).join("");
     win.document.write(`<html><head><title>Dispense Label</title>
     <style>body{font-family:Arial,sans-serif;padding:20px;color:#0f172a;font-size:13px}
-    .header{font-size:16px;font-weight:700;color:#1e5a80;margin-bottom:4px}
+    .header{font-size:16px;font-weight:700;color:#1d4ed8;margin-bottom:4px}
     table{width:100%;border-collapse:collapse;margin-top:10px}
     th{text-align:left;border-bottom:2px solid #cbd5e1;padding:4px 0;font-size:11px;color:#64748b}
     .footer{margin-top:14px;font-size:10px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:8px}
@@ -372,7 +372,7 @@ const PharmacyDashboard = () => {
       <div className="mx-auto w-full max-w-[1320px] space-y-5 animate-fade-in-up">
 
         {/* ── Header ── */}
-        <section className="rounded-3xl border border-white/70 bg-gradient-to-r from-[#1f5f85] via-[#2c759f] to-[#3e8ebc] p-5 text-white shadow-[0_25px_60px_-35px_rgba(18,53,78,0.75)]">
+        <section className="rounded-3xl border border-white/70 bg-gradient-to-r from-[#1f5f85] via-[#3b82f6] to-blue-400 p-5 text-white shadow-[0_25px_60px_-35px_rgba(18,53,78,0.75)]">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/75">Pharmacy Operations</p>
@@ -396,7 +396,7 @@ const PharmacyDashboard = () => {
             { label: "Accepted", value: metrics.accepted, color: "text-indigo-700" },
             { label: "Dispensed", value: metrics.dispensed, color: "text-emerald-700" },
             { label: "Rejected", value: metrics.rejected, color: "text-rose-700" },
-            { label: "Avg Turnaround", value: metrics.avgTurnaround, color: "text-[#2c759f]" },
+            { label: "Avg Turnaround", value: metrics.avgTurnaround, color: "text-[#3b82f6]" },
           ].map((m) => (
             <article key={m.label} className="rounded-2xl border border-white/60 bg-white/70 p-3 backdrop-blur-md text-center">
               <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-500">{m.label}</p>
@@ -413,7 +413,7 @@ const PharmacyDashboard = () => {
               onClick={() => setActiveTab(t.id)}
               className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-all ${
                 activeTab === t.id
-                  ? "bg-[#2c759f] text-white shadow-md"
+                  ? "bg-[#3b82f6] text-white shadow-md"
                   : "border border-white/50 bg-white/50 text-slate-600 hover:bg-white/70"
               }`}
             >
@@ -440,7 +440,7 @@ const PharmacyDashboard = () => {
                     onClick={() => setStatusFilter(s)}
                     className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${
                       statusFilter === s
-                        ? "border-[#2c759f] bg-[#2c759f] text-white"
+                        ? "border-[#3b82f6] bg-[#3b82f6] text-white"
                         : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
                     }`}
                   >
@@ -616,15 +616,15 @@ const PharmacyDashboard = () => {
             <div className="flex justify-end">
               <button
                 onClick={() => setShowAddStock((v) => !v)}
-                className="inline-flex items-center gap-2 rounded-full border border-[#2c759f]/30 bg-[#2c759f]/5 px-4 py-2 text-xs font-semibold text-[#2c759f] hover:bg-[#2c759f]/10 transition-all"
+                className="inline-flex items-center gap-2 rounded-full border border-[#3b82f6]/30 bg-[#3b82f6]/5 px-4 py-2 text-xs font-semibold text-[#3b82f6] hover:bg-[#3b82f6]/10 transition-all"
               >
                 <Plus className="h-3.5 w-3.5" /> {showAddStock ? "Cancel" : "Add Medicine"}
               </button>
             </div>
 
             {showAddStock && (
-              <div className="rounded-2xl border border-[#2c759f]/20 bg-white p-5 shadow-sm">
-                <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#2c759f] mb-4">New Stock Item</p>
+              <div className="rounded-2xl border border-[#3b82f6]/20 bg-white p-5 shadow-sm">
+                <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#3b82f6] mb-4">New Stock Item</p>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {[
                     { label: "Medicine Name *", field: "name" as const, placeholder: "e.g. Paracetamol 500mg" },
@@ -641,7 +641,7 @@ const PharmacyDashboard = () => {
                         placeholder={placeholder}
                         value={addStockForm[field]}
                         onChange={(e) => setAddStockForm((prev) => ({ ...prev, [field]: e.target.value }))}
-                        className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-800 focus:border-[#2c759f] focus:outline-none"
+                        className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-800 focus:border-[#3b82f6] focus:outline-none"
                       />
                     </div>
                   ))}
@@ -650,7 +650,7 @@ const PharmacyDashboard = () => {
                     <select
                       value={addStockForm.unit}
                       onChange={(e) => setAddStockForm((prev) => ({ ...prev, unit: e.target.value }))}
-                      className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-800 focus:border-[#2c759f] focus:outline-none"
+                      className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-800 focus:border-[#3b82f6] focus:outline-none"
                     >
                       {["Tabs", "Caps", "Syrup", "Injection", "Drops", "Cream", "Sachet", "Units"].map((u) => (
                         <option key={u} value={u}>{u}</option>
@@ -659,7 +659,7 @@ const PharmacyDashboard = () => {
                   </div>
                 </div>
                 <div className="mt-4 flex gap-2">
-                  <Button onClick={addStockItem} className="bg-[#2c759f] hover:bg-[#1a4d73] inline-flex items-center gap-2">
+                  <Button onClick={addStockItem} className="bg-[#3b82f6] hover:bg-[#1d4ed8] inline-flex items-center gap-2">
                     <Plus className="h-4 w-4" /> Add to Inventory
                   </Button>
                   <Button variant="outline" onClick={() => setShowAddStock(false)}>Cancel</Button>
@@ -668,7 +668,7 @@ const PharmacyDashboard = () => {
             )}
             <div className="rounded-2xl border border-white/60 bg-white/80 backdrop-blur-xl overflow-hidden shadow-sm">
               <div className="border-b border-slate-100 bg-slate-50/80 px-4 py-3 flex items-center justify-between">
-                <h2 className="text-sm font-bold text-slate-800 inline-flex items-center gap-2"><Package className="h-4 w-4 text-[#2c759f]" /> Inventory</h2>
+                <h2 className="text-sm font-bold text-slate-800 inline-flex items-center gap-2"><Package className="h-4 w-4 text-[#3b82f6]" /> Inventory</h2>
                 <span className="text-xs text-slate-500">{stock.length} items</span>
               </div>
               <div className="overflow-x-auto">
@@ -721,7 +721,7 @@ const PharmacyDashboard = () => {
                             <button
                               disabled={item.restockRequested}
                               onClick={() => requestRestock(item.id)}
-                              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${item.restockRequested ? "border-slate-200 bg-slate-50 text-slate-400 cursor-not-allowed" : "border-[#2c759f]/30 bg-[#2c759f]/5 text-[#2c759f] hover:bg-[#2c759f]/10"}`}
+                              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${item.restockRequested ? "border-slate-200 bg-slate-50 text-slate-400 cursor-not-allowed" : "border-[#3b82f6]/30 bg-[#3b82f6]/5 text-[#3b82f6] hover:bg-[#3b82f6]/10"}`}
                             >
                               {item.restockRequested ? "Requested" : "Request Restock"}
                             </button>
@@ -743,11 +743,11 @@ const PharmacyDashboard = () => {
           <section className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-bold text-slate-800 inline-flex items-center gap-2">
-                <BarChart3 className="h-4 w-4 text-[#2c759f]" /> Dispense History
+                <BarChart3 className="h-4 w-4 text-[#3b82f6]" /> Dispense History
               </h2>
               <button
                 onClick={exportDispenseLog}
-                className="inline-flex items-center gap-1.5 rounded-full border border-[#2c759f]/30 bg-[#2c759f]/5 px-3.5 py-2 text-xs font-semibold text-[#2c759f] hover:bg-[#2c759f]/10 transition-all"
+                className="inline-flex items-center gap-1.5 rounded-full border border-[#3b82f6]/30 bg-[#3b82f6]/5 px-3.5 py-2 text-xs font-semibold text-[#3b82f6] hover:bg-[#3b82f6]/10 transition-all"
               >
                 <Download className="h-3.5 w-3.5" /> Export CSV
               </button>
@@ -778,7 +778,7 @@ const PharmacyDashboard = () => {
                       {dispenseLog.map((log) => (
                         <tr key={log.id} className="border-b border-slate-50 last:border-0 hover:bg-blue-50/20 transition-colors">
                           <td className="px-4 py-3 text-xs font-mono text-slate-500">{log.id}</td>
-                          <td className="px-4 py-3 text-xs font-semibold text-[#2c759f]">{log.rxId}</td>
+                          <td className="px-4 py-3 text-xs font-semibold text-[#3b82f6]">{log.rxId}</td>
                           <td className="px-4 py-3 font-semibold text-slate-800">{log.patientName}</td>
                           <td className="px-4 py-3 text-slate-600">{log.doctor}</td>
                           <td className="px-4 py-3 text-xs text-slate-600 max-w-[200px] truncate">{log.medicines.join(", ")}</td>
@@ -826,7 +826,7 @@ const PharmacyDashboard = () => {
                 value={substitutionModal.note}
                 onChange={(e) => setSubstitutionModal({ ...substitutionModal, note: e.target.value })}
                 placeholder="e.g. Ibuprofen 400mg substituted with Paracetamol 500mg due to low stock..."
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#2c759f] focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#3b82f6] focus:outline-none"
               />
               <div className="mt-4 flex gap-2 justify-end">
                 <Button variant="outline" onClick={() => setSubstitutionModal(null)}>Cancel</Button>

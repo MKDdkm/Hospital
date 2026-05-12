@@ -237,9 +237,9 @@ const ReceptionistDashboard = () => {
     if (!win) return;
     win.document.write(`<html><head><title>OPD Slip</title>
     <style>body{font-family:Arial,sans-serif;padding:20px;color:#0f172a;font-size:13px}
-    .header{font-size:17px;font-weight:700;color:#1e5a80;margin-bottom:2px}
+    .header{font-size:17px;font-weight:700;color:#1d4ed8;margin-bottom:2px}
     .sub{font-size:11px;color:#64748b;margin-bottom:14px}
-    .token{font-size:42px;font-weight:900;color:#1e5a80;text-align:center;margin:10px 0;letter-spacing:-1px}
+    .token{font-size:42px;font-weight:900;color:#1d4ed8;text-align:center;margin:10px 0;letter-spacing:-1px}
     .row{display:flex;gap:8px;margin-bottom:5px;font-size:12px}
     .label{color:#64748b;min-width:100px}
     .value{font-weight:600}
@@ -594,13 +594,13 @@ const ReceptionistDashboard = () => {
         <div className="rounded-[28px] border border-white/60 bg-white/95 backdrop-blur-2xl p-3 shadow-[0_24px_65px_-45px_rgba(40,114,161,0.45)] sm:p-6 transition-all duration-300">
           <section className="flex flex-col gap-3 border-b border-white/40 px-2 pb-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="dashboard-title text-[#2872a1]">Reception desk operations</h1>
+              <h1 className="dashboard-title text-[#2563eb]">Reception desk operations</h1>
               <p className="mt-1 text-xs font-medium text-slate-500">Live queue control, billing follow-up, and appointment command center.</p>
             </div>
             <div className="flex items-center gap-3">
               <div className="rounded-xl border border-white/50 bg-white/40 px-4 py-2 text-center backdrop-blur-md">
                 <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Desk Time</p>
-                <p className="font-mono text-base font-bold text-[#2872a1]">{clockTime}</p>
+                <p className="font-mono text-base font-bold text-[#2563eb]">{clockTime}</p>
               </div>
               <div className="rounded-xl border border-white/50 bg-white/40 px-4 py-2 text-center backdrop-blur-md">
                 <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Date</p>
@@ -613,31 +613,31 @@ const ReceptionistDashboard = () => {
             <div className="space-y-4">
               <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                 <article className="glass-card rounded-2xl border border-white/60 bg-white/40 backdrop-blur-xl p-4 text-center shadow-[0_15px_35px_-12px_rgba(40,114,161,0.25)] transition-all duration-300 hover:bg-white/50">
-                  <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-gradient-to-b from-[#5f9cc0] to-[#2872a1] text-white shadow-lg">
+                  <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-gradient-to-b from-[#60a5fa] to-[#2563eb] text-white shadow-lg">
                     <Users className="h-8 w-8" />
                   </div>
-                  <p className="mt-3 text-lg font-bold text-[#2872a1]">Token {queueMetrics.currentToken}</p>
+                  <p className="mt-3 text-lg font-bold text-[#2563eb]">Token {queueMetrics.currentToken}</p>
                   <p className="text-xs text-slate-600">Active patient in desk flow</p>
-                  <p className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-[#2872a1]">
+                  <p className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-[#2563eb]">
                     <Clock3 className="h-3.5 w-3.5" /> {queueMetrics.estimatedWaitMinutes} mins wait
                   </p>
                 </article>
 
                 <article className="glass-card rounded-2xl border border-white/60 bg-white/40 backdrop-blur-xl p-4 lg:col-span-2 shadow-[0_15px_35px_-12px_rgba(40,114,161,0.25)] transition-all duration-300 hover:bg-white/50">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-[15px] font-bold text-[#2872a1]">General information</h3>
+                    <h3 className="text-[15px] font-bold text-[#2563eb]">General information</h3>
                     <button
                       onClick={() => navigate("/receptionist/register")}
-                      className="rounded-full border border-white/50 bg-white/30 px-2.5 py-1 text-[11px] font-semibold text-[#2872a1] hover:bg-white/45 transition-all duration-300"
+                      className="rounded-full border border-white/50 bg-white/30 px-2.5 py-1 text-[11px] font-semibold text-[#2563eb] hover:bg-white/45 transition-all duration-300"
                     >
                       <UserPlus className="h-3.5 w-3.5" />
                     </button>
                   </div>
                   <div className="mt-3 grid grid-cols-2 gap-3 text-xs text-slate-600">
-                    <div className="rounded-xl bg-gradient-to-br from-white/40 to-white/20 backdrop-blur-md p-3 border border-white/40"><p className="text-slate-500">Total patients</p><p className="text-lg font-bold text-[#2872a1] mt-1">{allPatients.length}</p></div>
-                    <div className="rounded-xl bg-gradient-to-br from-white/40 to-white/20 backdrop-blur-md p-3 border border-white/40"><p className="text-slate-500">Today appointments</p><p className="text-lg font-bold text-[#2872a1] mt-1">{dateAppointments.length}</p></div>
-                    <div className="rounded-xl bg-gradient-to-br from-white/40 to-white/20 backdrop-blur-md p-3 border border-white/40"><p className="text-slate-500">Checked in</p><p className="text-lg font-bold text-[#2872a1] mt-1">{queueMetrics.checkedIn}</p></div>
-                    <div className="rounded-xl bg-gradient-to-br from-white/40 to-white/20 backdrop-blur-md p-3 border border-white/40"><p className="text-slate-500">Waiting</p><p className="text-lg font-bold text-[#2872a1] mt-1">{queueMetrics.waiting}</p></div>
+                    <div className="rounded-xl bg-gradient-to-br from-white/40 to-white/20 backdrop-blur-md p-3 border border-white/40"><p className="text-slate-500">Total patients</p><p className="text-lg font-bold text-[#2563eb] mt-1">{allPatients.length}</p></div>
+                    <div className="rounded-xl bg-gradient-to-br from-white/40 to-white/20 backdrop-blur-md p-3 border border-white/40"><p className="text-slate-500">Today appointments</p><p className="text-lg font-bold text-[#2563eb] mt-1">{dateAppointments.length}</p></div>
+                    <div className="rounded-xl bg-gradient-to-br from-white/40 to-white/20 backdrop-blur-md p-3 border border-white/40"><p className="text-slate-500">Checked in</p><p className="text-lg font-bold text-[#2563eb] mt-1">{queueMetrics.checkedIn}</p></div>
+                    <div className="rounded-xl bg-gradient-to-br from-white/40 to-white/20 backdrop-blur-md p-3 border border-white/40"><p className="text-slate-500">Waiting</p><p className="text-lg font-bold text-[#2563eb] mt-1">{queueMetrics.waiting}</p></div>
                   </div>
                 </article>
               </div>
@@ -645,18 +645,18 @@ const ReceptionistDashboard = () => {
               <div className="glass-card rounded-2xl border border-white/60 bg-white/40 backdrop-blur-xl p-4 shadow-[0_15px_35px_-12px_rgba(40,114,161,0.25)] transition-all duration-300">
                 <div className="grid grid-cols-1 gap-3 border-b border-white/40 pb-4 sm:grid-cols-2 lg:grid-cols-4">
                   <label className="space-y-1">
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#2872a1]"><CalendarCheck className="h-3.5 w-3.5" /> Date</span>
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#2563eb]"><CalendarCheck className="h-3.5 w-3.5" /> Date</span>
                     <div className="flex gap-1.5">
                       <input
                         type="date"
                         value={selectedDate}
                         onChange={(e) => setSelectedDate(e.target.value)}
-                        className="h-10 w-full rounded-lg border border-white/50 px-3 text-sm text-slate-700 bg-white/60 backdrop-blur-sm focus:border-[#2872a1] focus:outline-none focus:bg-white/80 transition-all duration-300"
+                        className="h-10 w-full rounded-lg border border-white/50 px-3 text-sm text-slate-700 bg-white/60 backdrop-blur-sm focus:border-[#2563eb] focus:outline-none focus:bg-white/80 transition-all duration-300"
                       />
                       <button
                         type="button"
                         onClick={() => setSelectedDate(new Date().toISOString().split("T")[0])}
-                        className="h-10 shrink-0 rounded-lg border border-white/50 bg-white/60 px-2.5 text-xs font-semibold text-[#2872a1] hover:bg-white/80 transition-all"
+                        className="h-10 shrink-0 rounded-lg border border-white/50 bg-white/60 px-2.5 text-xs font-semibold text-[#2563eb] hover:bg-white/80 transition-all"
                       >
                         Today
                       </button>
@@ -664,22 +664,22 @@ const ReceptionistDashboard = () => {
                   </label>
 
                   <label className="space-y-1">
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#2872a1]"><Search className="h-3.5 w-3.5" /> Search</span>
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#2563eb]"><Search className="h-3.5 w-3.5" /> Search</span>
                     <input
                       type="text"
                       value={searchTerm}
                       placeholder="Patient, token, appointment id"
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="h-10 w-full rounded-lg border border-white/50 px-3 text-sm text-slate-700 bg-white/60 backdrop-blur-sm focus:border-[#2872a1] focus:outline-none focus:bg-white/80 transition-all duration-300"
+                      className="h-10 w-full rounded-lg border border-white/50 px-3 text-sm text-slate-700 bg-white/60 backdrop-blur-sm focus:border-[#2563eb] focus:outline-none focus:bg-white/80 transition-all duration-300"
                     />
                   </label>
 
                   <label className="space-y-1">
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#2872a1]"><Filter className="h-3.5 w-3.5" /> Status</span>
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#2563eb]"><Filter className="h-3.5 w-3.5" /> Status</span>
                     <select
                       value={statusFilter}
                       onChange={(e) => setStatusFilter(e.target.value as "All" | LocalAppointmentStatus)}
-                      className="h-10 w-full rounded-lg border border-white/50 px-3 text-sm text-slate-700 bg-white/60 backdrop-blur-sm focus:border-[#2872a1] focus:outline-none focus:bg-white/80 transition-all duration-300"
+                      className="h-10 w-full rounded-lg border border-white/50 px-3 text-sm text-slate-700 bg-white/60 backdrop-blur-sm focus:border-[#2563eb] focus:outline-none focus:bg-white/80 transition-all duration-300"
                     >
                       <option value="All">All</option>
                       {statusOptions.map((status) => <option key={status} value={status}>{status}</option>)}
@@ -687,11 +687,11 @@ const ReceptionistDashboard = () => {
                   </label>
 
                   <label className="space-y-1">
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#2872a1]"><Users className="h-3.5 w-3.5" /> Doctor</span>
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#2563eb]"><Users className="h-3.5 w-3.5" /> Doctor</span>
                     <select
                       value={doctorFilter}
                       onChange={(e) => setDoctorFilter(e.target.value as "All" | string)}
-                      className="h-10 w-full rounded-lg border border-white/50 px-3 text-sm text-slate-700 bg-white/60 backdrop-blur-sm focus:border-[#2872a1] focus:outline-none focus:bg-white/80 transition-all duration-300"
+                      className="h-10 w-full rounded-lg border border-white/50 px-3 text-sm text-slate-700 bg-white/60 backdrop-blur-sm focus:border-[#2563eb] focus:outline-none focus:bg-white/80 transition-all duration-300"
                     >
                       {doctorOptions.map((doctor) => <option key={doctor} value={doctor}>{doctor}</option>)}
                     </select>
@@ -701,19 +701,19 @@ const ReceptionistDashboard = () => {
                 <div className="mt-4 flex flex-wrap items-center gap-2">
                   <button
                     onClick={callNextPatient}
-                    className="rounded-full bg-gradient-to-r from-[#2872a1] to-[#1a4d73] px-3.5 py-2 text-xs font-semibold text-white transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95"
+                    className="rounded-full bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] px-3.5 py-2 text-xs font-semibold text-white transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95"
                   >
                     Call Next
                   </button>
                   <button
                     onClick={recallActiveToken}
-                    className="rounded-full border border-white/50 bg-white/30 backdrop-blur-md px-3.5 py-2 text-xs font-semibold text-[#2872a1] transition-all duration-300 hover:bg-white/45 hover:scale-105 active:scale-95"
+                    className="rounded-full border border-white/50 bg-white/30 backdrop-blur-md px-3.5 py-2 text-xs font-semibold text-[#2563eb] transition-all duration-300 hover:bg-white/45 hover:scale-105 active:scale-95"
                   >
                     Recall Token
                   </button>
                   <button
                     onClick={markCurrentNoShow}
-                    className="rounded-full border border-white/50 bg-white/30 backdrop-blur-md px-3.5 py-2 text-xs font-semibold text-[#2872a1] transition-all duration-300 hover:bg-white/45 hover:scale-105 active:scale-95"
+                    className="rounded-full border border-white/50 bg-white/30 backdrop-blur-md px-3.5 py-2 text-xs font-semibold text-[#2563eb] transition-all duration-300 hover:bg-white/45 hover:scale-105 active:scale-95"
                   >
                     Mark No Show
                   </button>
@@ -725,25 +725,25 @@ const ReceptionistDashboard = () => {
                   </button>
                   <button
                     onClick={() => navigate("/receptionist/appointment")}
-                    className="rounded-full border border-white/50 bg-white/30 backdrop-blur-md px-3.5 py-2 text-xs font-semibold text-[#2872a1] transition-all duration-300 hover:bg-white/45 hover:scale-105 active:scale-95"
+                    className="rounded-full border border-white/50 bg-white/30 backdrop-blur-md px-3.5 py-2 text-xs font-semibold text-[#2563eb] transition-all duration-300 hover:bg-white/45 hover:scale-105 active:scale-95"
                   >
                     <span className="inline-flex items-center gap-1"><CalendarPlus className="h-3.5 w-3.5" /> New booking</span>
                   </button>
                   <button
                     onClick={() => navigate("/receptionist/billing")}
-                    className="rounded-full border border-white/50 bg-white/30 backdrop-blur-md px-3.5 py-2 text-xs font-semibold text-[#2872a1] transition-all duration-300 hover:bg-white/45 hover:scale-105 active:scale-95"
+                    className="rounded-full border border-white/50 bg-white/30 backdrop-blur-md px-3.5 py-2 text-xs font-semibold text-[#2563eb] transition-all duration-300 hover:bg-white/45 hover:scale-105 active:scale-95"
                   >
                     <span className="inline-flex items-center gap-1"><IndianRupee className="h-3.5 w-3.5" /> Billing</span>
                   </button>
                   <button
                     onClick={() => navigate("/receptionist/register")}
-                    className="rounded-full border border-white/50 bg-white/30 backdrop-blur-md px-3.5 py-2 text-xs font-semibold text-[#2872a1] transition-all duration-300 hover:bg-white/45 hover:scale-105 active:scale-95"
+                    className="rounded-full border border-white/50 bg-white/30 backdrop-blur-md px-3.5 py-2 text-xs font-semibold text-[#2563eb] transition-all duration-300 hover:bg-white/45 hover:scale-105 active:scale-95"
                   >
                     <span className="inline-flex items-center gap-1"><ClipboardList className="h-3.5 w-3.5" /> Register</span>
                   </button>
                   <button
                     onClick={resetFilters}
-                    className="rounded-full border border-white/50 bg-white/30 backdrop-blur-md px-3.5 py-2 text-xs font-semibold text-[#2872a1] transition-all duration-300 hover:bg-white/45 hover:scale-105 active:scale-95"
+                    className="rounded-full border border-white/50 bg-white/30 backdrop-blur-md px-3.5 py-2 text-xs font-semibold text-[#2563eb] transition-all duration-300 hover:bg-white/45 hover:scale-105 active:scale-95"
                   >
                     <span className="inline-flex items-center gap-1"><RefreshCcw className="h-3.5 w-3.5" /> Reset filters</span>
                   </button>
@@ -757,8 +757,8 @@ const ReceptionistDashboard = () => {
 
                 <div className="mt-4 rounded-xl border border-white/50 bg-white/25 p-3 backdrop-blur-md">
                   <div className="mb-2 flex items-center justify-between">
-                    <h4 className="text-xs font-bold uppercase tracking-[0.16em] text-[#2872a1]">Quick Walk-In</h4>
-                    <UserRoundPlus className="h-4 w-4 text-[#2872a1]" />
+                    <h4 className="text-xs font-bold uppercase tracking-[0.16em] text-[#2563eb]">Quick Walk-In</h4>
+                    <UserRoundPlus className="h-4 w-4 text-[#2563eb]" />
                   </div>
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-5">
                     <input
@@ -802,7 +802,7 @@ const ReceptionistDashboard = () => {
                   />
                   <button
                     onClick={quickAddWalkIn}
-                    className="mt-2 rounded-full bg-gradient-to-r from-[#2872a1] to-[#1a4d73] px-3.5 py-2 text-xs font-semibold text-white transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95"
+                    className="mt-2 rounded-full bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] px-3.5 py-2 text-xs font-semibold text-white transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95"
                   >
                     Add walk-in to queue
                   </button>
@@ -810,7 +810,7 @@ const ReceptionistDashboard = () => {
 
                 <div className="mt-4 rounded-xl border border-white/50 bg-white/25 p-3 backdrop-blur-md">
                   <div className="mb-2 flex items-center justify-between">
-                    <h4 className="text-xs font-bold uppercase tracking-[0.16em] text-[#2872a1]">Next Up Queue</h4>
+                    <h4 className="text-xs font-bold uppercase tracking-[0.16em] text-[#2563eb]">Next Up Queue</h4>
                     <span className="text-[11px] font-semibold text-slate-500">{upcomingQueue.length} scheduled</span>
                   </div>
                   {upcomingQueue.length === 0 && (
@@ -822,7 +822,7 @@ const ReceptionistDashboard = () => {
                         <div>
                           <button
                             onClick={() => openPatientProfile(appointment.patientId)}
-                            className="text-xs font-semibold text-slate-800 hover:text-[#2872a1] transition-colors duration-300"
+                            className="text-xs font-semibold text-slate-800 hover:text-[#2563eb] transition-colors duration-300"
                           >
                             Token {appointment.token} - {appointment.patientName}
                           </button>
@@ -853,7 +853,7 @@ const ReceptionistDashboard = () => {
                         <div>
                           <button
                             onClick={() => openPatientProfile(appointment.patientId)}
-                            className="text-sm font-semibold text-slate-800 hover:text-[#2872a1] transition-colors duration-300"
+                            className="text-sm font-semibold text-slate-800 hover:text-[#2563eb] transition-colors duration-300"
                           >
                             Token {appointment.token} - {appointment.patientName}
                           </button>
@@ -900,7 +900,7 @@ const ReceptionistDashboard = () => {
                           <td className="px-4 py-3 text-slate-700">
                             <button
                               onClick={() => openPatientProfile(appointment.patientId)}
-                              className="font-semibold hover:text-[#2872a1] transition-colors duration-300"
+                              className="font-semibold hover:text-[#2563eb] transition-colors duration-300"
                             >
                               {appointment.patientName}
                             </button>
@@ -943,8 +943,8 @@ const ReceptionistDashboard = () => {
             <div className="space-y-4">
               <article className="glass-card rounded-2xl border border-white/60 bg-white/40 backdrop-blur-xl p-4 shadow-[0_15px_35px_-12px_rgba(40,114,161,0.25)] transition-all duration-300">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-[15px] font-bold text-[#2872a1]">Queue Insights</h3>
-                  <Gauge className="h-4 w-4 text-[#2872a1]" />
+                  <h3 className="text-[15px] font-bold text-[#2563eb]">Queue Insights</h3>
+                  <Gauge className="h-4 w-4 text-[#2563eb]" />
                 </div>
                 <div className="mt-3 grid grid-cols-3 gap-2">
                   <div className="rounded-lg border border-white/40 bg-white/40 px-2 py-2 text-center">
@@ -976,19 +976,19 @@ const ReceptionistDashboard = () => {
                       <span>{queueMetrics.waiting} patients</span>
                     </div>
                     <div className="h-2 rounded-full bg-white/50">
-                      <div className="h-2 rounded-full bg-[#2872a1] transition-all duration-500" style={{ width: `${Math.min(queueMetrics.waiting * 14, 100)}%` }} />
+                      <div className="h-2 rounded-full bg-[#2563eb] transition-all duration-500" style={{ width: `${Math.min(queueMetrics.waiting * 14, 100)}%` }} />
                     </div>
                   </div>
                 </div>
                 <p className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-slate-600">
-                  <UserCheck2 className="h-3.5 w-3.5 text-[#2872a1]" /> Keep no-show rate under 10% for smoother desk throughput.
+                  <UserCheck2 className="h-3.5 w-3.5 text-[#2563eb]" /> Keep no-show rate under 10% for smoother desk throughput.
                 </p>
               </article>
 
               <article className="glass-card rounded-2xl border border-white/60 bg-white/40 backdrop-blur-xl p-4 shadow-[0_15px_35px_-12px_rgba(40,114,161,0.25)] transition-all duration-300">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-[15px] font-bold text-[#2872a1]">Anamnesis</h3>
-                  <span className="rounded-full border border-white/50 bg-white/30 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#2872a1]">Live</span>
+                  <h3 className="text-[15px] font-bold text-[#2563eb]">Anamnesis</h3>
+                  <span className="rounded-full border border-white/50 bg-white/30 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#2563eb]">Live</span>
                 </div>
                 <div className="mt-3 space-y-2">
                   {notifications.map((notice, index) => (
@@ -1010,14 +1010,14 @@ const ReceptionistDashboard = () => {
 
               <article className="glass-card rounded-2xl border border-white/60 bg-white/40 backdrop-blur-xl p-4 shadow-[0_15px_35px_-12px_rgba(40,114,161,0.25)] transition-all duration-300">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-[15px] font-bold text-[#2872a1]">Reminder Queue</h3>
-                  <BellRing className="h-4 w-4 text-[#2872a1]" />
+                  <h3 className="text-[15px] font-bold text-[#2563eb]">Reminder Queue</h3>
+                  <BellRing className="h-4 w-4 text-[#2563eb]" />
                 </div>
                 <div className="mt-3 space-y-2">
                   {reminderQueue.length === 0 && <p className="text-xs text-slate-500">No reminder tasks right now.</p>}
                   {reminderQueue.map((item, idx) => (
                     <div key={`${item.type}-${idx}`} className="rounded-lg border border-white/40 bg-white/45 px-3 py-2">
-                      <p className="text-[11px] font-semibold text-[#2872a1] uppercase tracking-[0.08em]">{item.type}</p>
+                      <p className="text-[11px] font-semibold text-[#2563eb] uppercase tracking-[0.08em]">{item.type}</p>
                       <p className="text-xs text-slate-700">{item.message}</p>
                     </div>
                   ))}
@@ -1026,10 +1026,10 @@ const ReceptionistDashboard = () => {
 
               <article className="glass-card rounded-2xl border border-white/60 bg-white/40 backdrop-blur-xl p-4 shadow-[0_15px_35px_-12px_rgba(40,114,161,0.25)] transition-all duration-300">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-[15px] font-bold text-[#2872a1]">Files</h3>
+                  <h3 className="text-[15px] font-bold text-[#2563eb]">Files</h3>
                   <button
                     onClick={() => navigate("/receptionist/billing")}
-                    className="rounded-full border border-white/50 bg-white/30 backdrop-blur-md px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#2872a1] hover:bg-white/45 transition-all duration-300"
+                    className="rounded-full border border-white/50 bg-white/30 backdrop-blur-md px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#2563eb] hover:bg-white/45 transition-all duration-300"
                   >
                     Collect
                   </button>
@@ -1051,8 +1051,8 @@ const ReceptionistDashboard = () => {
 
               <article className="glass-card rounded-2xl border border-white/60 bg-white/40 backdrop-blur-xl p-4 shadow-[0_15px_35px_-12px_rgba(40,114,161,0.25)] transition-all duration-300">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-[15px] font-bold text-[#2872a1]">Desk SLA Watch</h3>
-                  <Clock3 className="h-4 w-4 text-[#2872a1]" />
+                  <h3 className="text-[15px] font-bold text-[#2563eb]">Desk SLA Watch</h3>
+                  <Clock3 className="h-4 w-4 text-[#2563eb]" />
                 </div>
                 <div className="mt-3 grid grid-cols-1 gap-2 text-xs sm:grid-cols-2">
                   <div className="rounded-lg border border-white/40 bg-white/45 px-3 py-2">
@@ -1065,7 +1065,7 @@ const ReceptionistDashboard = () => {
                   </div>
                 </div>
                 <div className="mt-3 rounded-lg border border-white/40 bg-white/45 px-3 py-2 text-xs text-slate-700">
-                  <p className="font-semibold text-[#2872a1]">Quick call script</p>
+                  <p className="font-semibold text-[#2563eb]">Quick call script</p>
                   <p className="mt-1">"Hello, this is MedCore front desk. Your consultation slot is in 20 minutes, please arrive at the desk."</p>
                 </div>
               </article>

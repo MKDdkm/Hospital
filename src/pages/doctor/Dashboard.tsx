@@ -190,7 +190,7 @@ const DoctorDashboard = () => {
     <DashboardLayout>
       <div className="mx-auto w-full max-w-[1320px] animate-fade-in-up">
         <div className="rounded-[28px] border border-white/60 bg-white/95 backdrop-blur-2xl p-4 shadow-[0_24px_65px_-45px_rgba(40,114,161,0.45)] sm:p-6">
-          <section className="rounded-2xl bg-gradient-to-r from-[#2872a1] via-[#2f7fb3] to-[#5f9cc0] px-5 py-4 text-white">
+          <section className="rounded-2xl bg-gradient-to-r from-[#2563eb] via-[#2f7fb3] to-[#60a5fa] px-5 py-4 text-white">
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/80">Personalized Doctor Workspace</p>
             <h1 className="mt-1 text-2xl font-bold tracking-tight">{activeDoctor}</h1>
             <p className="mt-1 text-sm text-white/85">Showing only your appointments, patients, and clinical workload.</p>
@@ -202,7 +202,7 @@ const DoctorDashboard = () => {
               onClick={() => navigate("/doctor/prescriptions")}
               className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
             >
-              <p className="inline-flex items-center gap-1 text-sm font-semibold text-[#2872a1]"><FileText className="h-4 w-4" /> Prescription Status</p>
+              <p className="inline-flex items-center gap-1 text-sm font-semibold text-[#2563eb]"><FileText className="h-4 w-4" /> Prescription Status</p>
               <p className="mt-1 text-xs text-slate-500">Track pharmacy-sent and dispensed prescriptions.</p>
             </button>
             <button
@@ -210,7 +210,7 @@ const DoctorDashboard = () => {
               onClick={() => navigate("/doctor/search")}
               className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
             >
-              <p className="inline-flex items-center gap-1 text-sm font-semibold text-[#2872a1]"><Search className="h-4 w-4" /> Search Patient</p>
+              <p className="inline-flex items-center gap-1 text-sm font-semibold text-[#2563eb]"><Search className="h-4 w-4" /> Search Patient</p>
               <p className="mt-1 text-xs text-slate-500">Open chart details quickly from doctor workspace.</p>
             </button>
           </section>
@@ -265,7 +265,7 @@ const DoctorDashboard = () => {
                     <div className="flex gap-1.5">
                       <button
                         onClick={() => navigate(`/doctor/write-rx?patientId=${appointment.patientId}&patientName=${encodeURIComponent(appointment.patientName)}`)}
-                        className="inline-flex items-center gap-1 rounded-full border border-[#2872a1]/30 bg-[#2872a1]/5 px-2.5 py-1 text-[11px] font-semibold text-[#2872a1] hover:bg-[#2872a1]/10 transition-all"
+                        className="inline-flex items-center gap-1 rounded-full border border-[#2563eb]/30 bg-[#2563eb]/5 px-2.5 py-1 text-[11px] font-semibold text-[#2563eb] hover:bg-[#2563eb]/10 transition-all"
                       >
                         <FilePlus className="h-3 w-3" /> Write Rx
                       </button>
@@ -306,16 +306,16 @@ const DoctorDashboard = () => {
                   </div>
                 </div>
                 <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700">
-                  <p className="inline-flex items-center gap-1 font-semibold"><Clock3 className="h-3.5 w-3.5 text-[#2872a1]" /> Pending reviews: {pendingReviews}</p>
+                  <p className="inline-flex items-center gap-1 font-semibold"><Clock3 className="h-3.5 w-3.5 text-[#2563eb]" /> Pending reviews: {pendingReviews}</p>
                 </div>
                 <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700">
-                  <p className="inline-flex items-center gap-1 font-semibold"><Users className="h-3.5 w-3.5 text-[#2872a1]" /> Assigned patients: {myPatients.length}</p>
+                  <p className="inline-flex items-center gap-1 font-semibold"><Users className="h-3.5 w-3.5 text-[#2563eb]" /> Assigned patients: {myPatients.length}</p>
                 </div>
                 <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700">
-                  <p className="inline-flex items-center gap-1 font-semibold"><FileText className="h-3.5 w-3.5 text-[#2872a1]" /> Revenue touchpoints: ₹{myBillingAmount.toLocaleString()}</p>
+                  <p className="inline-flex items-center gap-1 font-semibold"><FileText className="h-3.5 w-3.5 text-[#2563eb]" /> Revenue touchpoints: ₹{myBillingAmount.toLocaleString()}</p>
                 </div>
                 <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700">
-                  <p className="inline-flex items-center gap-1 font-semibold"><Stethoscope className="h-3.5 w-3.5 text-[#2872a1]" /> Sent to pharmacy: {sentToPharmacyCount} • Pending: {pendingPharmacyCount} • Dispensed: {dispensedCount}</p>
+                  <p className="inline-flex items-center gap-1 font-semibold"><Stethoscope className="h-3.5 w-3.5 text-[#2563eb]" /> Sent to pharmacy: {sentToPharmacyCount} • Pending: {pendingPharmacyCount} • Dispensed: {dispensedCount}</p>
                 </div>
               </div>
             </article>
@@ -342,13 +342,13 @@ const DoctorDashboard = () => {
               <h3 className="mb-3 text-sm font-bold text-slate-800">My Clinical Highlights</h3>
               <div className="space-y-2 text-xs">
                 <p className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-700 inline-flex items-center gap-1.5">
-                  <Stethoscope className="h-3.5 w-3.5 text-[#2872a1]" /> Prescriptions authored: {myPrescriptions.length}
+                  <Stethoscope className="h-3.5 w-3.5 text-[#2563eb]" /> Prescriptions authored: {myPrescriptions.length}
                 </p>
                 <p className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-700 inline-flex items-center gap-1.5">
-                  <CalendarCheck className="h-3.5 w-3.5 text-[#2872a1]" /> Total appointments assigned: {myAppointments.length}
+                  <CalendarCheck className="h-3.5 w-3.5 text-[#2563eb]" /> Total appointments assigned: {myAppointments.length}
                 </p>
                 <p className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-700 inline-flex items-center gap-1.5">
-                  <UserRound className="h-3.5 w-3.5 text-[#2872a1]" /> Follow-up opportunity set: {myAppointments.filter((a) => a.status === "Completed").length}
+                  <UserRound className="h-3.5 w-3.5 text-[#2563eb]" /> Follow-up opportunity set: {myAppointments.filter((a) => a.status === "Completed").length}
                 </p>
               </div>
             </article>
